@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+package stream;
+option go_package = "movie-streaming/proto/stream";
+
+import "google/protobuf/timestamp.proto";
+
+service StreamService {
+  // Session lifecycle
+  rpc StartStream(StartStreamRequest)   returns (StartStreamResponse);
+  rpc StopStream(StopStreamRequest)     returns (StopStreamResponse);
+  rpc GetStreamStatus(GetStreamStatusRequest) returns (GetStreamStatusResponse);
+
+  // Playback controls
+  rpc PauseStream(PauseStreamRequest)   returns (PauseStreamResponse);
+  rpc ResumeStream(ResumeStreamRequest) returns (ResumeStreamResponse);
+  rpc SeekStream(SeekStreamRequest)     returns (SeekStreamResponse);
+
+  // Quality
+  rpc GetQualities(GetQualitiesRequest)   returns (GetQualitiesResponse);
+  rpc SetQuality(SetQualityRequest)       returns (SetQualityResponse);
+
+  // Subtitles
+  rpc GetSubtitles(GetSubtitlesRequest)         returns (GetSubtitlesResponse);
+  rpc GetSubtitlesByLang(GetSubtitlesByLangRequest) returns (GetSubtitlesByLangResponse);
+
+  // Admin / Info
+  rpc GetActiveSessions(GetActiveSessionsRequest) returns (GetActiveSessionsResponse);
+  rpc GetPreview(GetPreviewRequest)               returns (GetPreviewResponse);
+}
+
+// ─── Enums ─────────────────────────────────────────────────
+
+enum SessionStatus {
+  UNKNOWN  = 0;
+  PLAYING  = 1;
+  PAUSED   = 2;
+  FINISHED = 3;
+}
+
+enum Quality {
+  Q_480P  = 0;
+  Q_720P  = 1;
+  Q_1080P = 2;
+}
+
+// ─── Messages ──────────────────────────────────────────────
+
+message Session {
+  string        id               = 1;
+  string        user_id          = 2;
+  string        movie_id         = 3;
+  int32         position_seconds = 4;
+  Quality       quality          = 5;
+  SessionStatus status           = 6;
+  google.protobuf.Timestamp started_at  = 7;
+  google.protobuf.Timestamp updated_at  = 8;
+}
+
+message Subtitle {
+  string lang     = 1;  // "en", "ru", "kz"
+  string label    = 2;  // "English", "Русский"
+  string file_url = 3;  // ссылка на .vtt файл
+}
+
+// Session lifecycle
+message StartStreamRequest  { string user_id = 1; string movie_id = 2; Quality quality = 3; }
+message StartStreamResponse { Session session = 1; }
+
+message StopStreamRequest   { string session_id = 1; }
+message StopStreamResponse  { bool success = 1; int32 watched_seconds = 2; }
+
+message GetStreamStatusRequest  { string session_id = 1; }
+message GetStreamStatusResponse { Session session    = 1; }
+
+// Playback controls
+message PauseStreamRequest   { string session_id = 1; int32 position_seconds = 2; }
+message PauseStreamResponse  { bool success = 1; }
+
+message ResumeStreamRequest  { string session_id = 1; }
+message ResumeStreamResponse { bool success = 1; }
+
+message SeekStreamRequest    { string session_id = 1; int32 position_seconds = 2; }
+message SeekStreamResponse   { bool success = 1; }
+
+// Quality
+message GetQualitiesRequest  { string movie_id = 1; }
+message GetQualitiesResponse { repeated Quality qualities = 1; }
+
+message SetQualityRequest    { string session_id = 1; Quality quality = 2; }
+message SetQualityResponse   { bool success = 1; }
+
+// Subtitles
+message GetSubtitlesRequest      { string movie_id = 1; }
+message GetSubtitlesResponse     { repeated Subtitle subtitles = 1; }
+
+message GetSubtitlesByLangRequest  { string movie_id = 1; string lang = 2; }
+message GetSubtitlesByLangResponse { Subtitle subtitle = 1; }
+
+// Admin / Info
+message GetActiveSessionsRequest  { int32 limit = 1; }
+message GetActiveSessionsResponse { repeated Session sessions = 1; int32 total = 2; }
+
+message GetPreviewRequest   { string movie_id = 1; }
+message GetPreviewResponse  { string preview_url = 1; string trailer_url = 2; }

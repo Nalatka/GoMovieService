@@ -1,0 +1,187 @@
+services:
+  nats:
+    image: nats:2.10-alpine
+    container_name: nats
+    command: ["--jetstream", "--http_port", "8222"]
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    networks:
+      - streaming-net
+
+  user-db:
+    image: postgres:16-alpine
+    container_name: user-db
+    environment:
+      POSTGRES_DB: userdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: userpass
+    ports:
+      - "5433:5432"
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+    networks:
+      - streaming-net
+
+  user-redis:
+    image: redis:7-alpine
+    container_name: user-redis
+    ports:
+      - "6380:6379"
+    networks:
+      - streaming-net
+
+  user-service:
+    build: ./services/user-service
+    container_name: user-service
+    environment:
+      DB_HOST: user-db
+      DB_PORT: 5432
+      DB_NAME: userdb
+      DB_USER: user
+      DB_PASSWORD: userpass
+      REDIS_HOST: user-redis:6379
+      NATS_URL: nats://nats:4222
+      GRPC_PORT: 50051
+    ports:
+      - "50051:50051"
+    depends_on:
+      - user-db
+      - user-redis
+      - nats
+    networks:
+      - streaming-net
+
+  content-db:
+    image: postgres:16-alpine
+    container_name: content-db
+    environment:
+      POSTGRES_DB: contentdb
+      POSTGRES_USER: content
+      POSTGRES_PASSWORD: contentpass
+    ports:
+      - "5434:5432"
+    volumes:
+      - content-db-data:/var/lib/postgresql/data
+    networks:
+      - streaming-net
+
+  content-redis:
+    image: redis:7-alpine
+    container_name: content-redis
+    ports:
+      - "6381:6379"
+    networks:
+      - streaming-net
+
+  content-service:
+    build: ./services/content-service
+    container_name: content-service
+    environment:
+      DB_HOST: content-db
+      DB_PORT: 5432
+      DB_NAME: contentdb
+      DB_USER: content
+      DB_PASSWORD: contentpass
+      REDIS_HOST: content-redis:6379
+      NATS_URL: nats://nats:4222
+      GRPC_PORT: 50052
+    ports:
+      - "50052:50052"
+    depends_on:
+      - content-db
+      - content-redis
+      - nats
+    networks:
+      - streaming-net
+
+  stream-db:
+    image: postgres:16-alpine
+    container_name: stream-db
+    environment:
+      POSTGRES_DB: streamdb
+      POSTGRES_USER: stream
+      POSTGRES_PASSWORD: streampass
+    ports:
+      - "5435:5432"
+    volumes:
+      - stream-db-data:/var/lib/postgresql/data
+    networks:
+      - streaming-net
+
+  stream-redis:
+    image: redis:7-alpine
+    container_name: stream-redis
+    ports:
+      - "6382:6379"
+    networks:
+      - streaming-net
+
+  stream-service:
+    build: ./services/stream-service
+    container_name: stream-service
+    environment:
+      DB_HOST: stream-db
+      DB_PORT: 5432
+      DB_NAME: streamdb
+      DB_USER: stream
+      DB_PASSWORD: streampass
+      REDIS_HOST: stream-redis:6379
+      NATS_URL: nats://nats:4222
+      GRPC_PORT: 50053
+    ports:
+      - "50053:50053"
+    depends_on:
+      - stream-db
+      - stream-redis
+      - nats
+    networks:
+      - streaming-net
+
+  user-gateway:
+    build: ./gateway/user-gateway
+    container_name: user-gateway
+    environment:
+      USER_SERVICE_ADDR: user-service:50051
+      PORT: 8081
+    ports:
+      - "8081:8081"
+    depends_on:
+      - user-service
+    networks:
+      - streaming-net
+
+  content-gateway:
+    build: ./gateway/content-gateway
+    container_name: content-gateway
+    environment:
+      CONTENT_SERVICE_ADDR: content-service:50052
+      PORT: 8082
+    ports:
+      - "8082:8082"
+    depends_on:
+      - content-service
+    networks:
+      - streaming-net
+
+  stream-gateway:
+    build: ./gateway/stream-gateway
+    container_name: stream-gateway
+    environment:
+      STREAM_SERVICE_ADDR: stream-service:50053
+      PORT: 8083
+    ports:
+      - "8083:8083"
+    depends_on:
+      - stream-service
+    networks:
+      - streaming-net
+
+networks:
+  streaming-net:
+    driver: bridge
+
+volumes:
+  user-db-data:
+  content-db-data:
+  stream-db-data:
