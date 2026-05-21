@@ -1,7 +1,9 @@
 FROM golang:1.22-alpine AS build
 WORKDIR /app
-COPY go.mod ./
-COPY cmd ./cmd
+COPY services/user-service/go.mod services/user-service/go.sum* ./
+COPY proto/go.mod proto/go.sum proto/user.pb.go proto/user_grpc.pb.go /proto/
+COPY services/user-service/cmd ./cmd
+COPY services/user-service/internal ./internal
 RUN CGO_ENABLED=0 GOOS=linux go build -o /bin/app ./cmd/user-service
 
 FROM alpine:3.20
