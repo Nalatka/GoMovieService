@@ -1,0 +1,9 @@
+-- 000001_create_sessions.down.sql
+
+DROP TABLE IF EXISTS subtitles CASCADE;
+DROP TABLE IF EXISTS sessions CASCADE;
+
+DROP TYPE IF EXISTS quality_type CASCADE;
+DROP TYPE IF EXISTS session_status CASCADE;
+
+DROP EXTENSION IF EXISTS "uuid-ossp";
