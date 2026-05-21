@@ -17,88 +17,107 @@ service ContentService {
   rpc SearchMovies(SearchMoviesRequest) returns (SearchMoviesResponse);
 
   // Genres
-  rpc GetGenres(GetGenresRequest)             returns (GetGenresResponse);
+  rpc GetGenres(GetGenresRequest)              returns (GetGenresResponse);
   rpc GetMoviesByGenre(GetMoviesByGenreRequest) returns (GetMoviesByGenreResponse);
 
   // Ratings
-  rpc RateMovie(RateMovieRequest)       returns (RateMovieResponse);
+  rpc RateMovie(RateMovieRequest)          returns (RateMovieResponse);
   rpc GetMovieRating(GetMovieRatingRequest) returns (GetMovieRatingResponse);
 
   // Discovery
-  rpc GetTopMovies(GetTopMoviesRequest)     returns (GetTopMoviesResponse);
+  rpc GetTopMovies(GetTopMoviesRequest)         returns (GetTopMoviesResponse);
   rpc GetSimilarMovies(GetSimilarMoviesRequest) returns (GetSimilarMoviesResponse);
 }
 
 // ─── Messages ──────────────────────────────────────────────
 
 message Movie {
-  string id           = 1;
+  int64  id           = 1;
   string title        = 2;
   string description  = 3;
   int32  year         = 4;
-  string genre_id     = 5;
-  string video_url    = 6; 
-  string poster_url   = 7;
-  int32  duration_sec = 8;
-  float  rating       = 9;
-  int32  views        = 10;
-  google.protobuf.Timestamp created_at = 11;
+  int64  genre_id     = 5;
+  string genre_name   = 6;
+  string video_url    = 7;
+  string poster_url   = 8;
+  int32  duration_sec = 9;
+  double avg_rating   = 10;
+  int64  views        = 11;
+  google.protobuf.Timestamp created_at = 12;
 }
 
 message Genre {
-  string id   = 1;
+  int64  id   = 1;
   string name = 2;
 }
 
 // CRUD
+
 message CreateMovieRequest {
   string title        = 1;
   string description  = 2;
   int32  year         = 3;
-  string genre_id     = 4;
+  int64  genre_id     = 4;
   string video_url    = 5;
   string poster_url   = 6;
   int32  duration_sec = 7;
 }
 message CreateMovieResponse { Movie movie = 1; }
 
-message GetMovieRequest    { string movie_id = 1; }
-message GetMovieResponse   { Movie movie     = 1; }
+message GetMovieRequest  { int64 movie_id = 1; }
+message GetMovieResponse { Movie movie    = 1; }
 
 message UpdateMovieRequest {
-  string movie_id     = 1;
+  int64  movie_id     = 1;
   string title        = 2;
   string description  = 3;
-  string poster_url   = 4;
+  int32  year         = 4;
+  int64  genre_id     = 5;
+  string video_url    = 6;
+  string poster_url   = 7;
+  int32  duration_sec = 8;
 }
 message UpdateMovieResponse { Movie movie = 1; }
 
-message DeleteMovieRequest  { string movie_id = 1; }
-message DeleteMovieResponse { bool success    = 1; }
+message DeleteMovieRequest  { int64 movie_id = 1; }
+message DeleteMovieResponse { bool  success  = 1; }
 
 // Listing & Search
+
 message ListMoviesRequest  { int32 page = 1; int32 limit = 2; }
 message ListMoviesResponse { repeated Movie movies = 1; int32 total = 2; }
 
-message SearchMoviesRequest  { string query = 1; int32 limit = 2; }
-message SearchMoviesResponse { repeated Movie movies = 1; }
+message SearchMoviesRequest  { string query = 1; int32 page = 2; int32 limit = 3; }
+message SearchMoviesResponse { repeated Movie movies = 1; int32 total = 2; }
 
 // Genres
-message GetGenresRequest           {}
-message GetGenresResponse          { repeated Genre genres = 1; }
-message GetMoviesByGenreRequest    { string genre_id = 1; int32 limit = 2; }
-message GetMoviesByGenreResponse   { repeated Movie movies = 1; }
+
+message GetGenresRequest  {}
+message GetGenresResponse { repeated Genre genres = 1; }
+
+message GetMoviesByGenreRequest  { int64 genre_id = 1; int32 page = 2; int32 limit = 3; }
+message GetMoviesByGenreResponse { repeated Movie movies = 1; int32 total = 2; }
 
 // Ratings
-message RateMovieRequest   { string movie_id = 1; string user_id = 2; float score = 3; }
-message RateMovieResponse  { bool success = 1; float new_avg = 2; }
 
-message GetMovieRatingRequest  { string movie_id = 1; }
-message GetMovieRatingResponse { float avg_rating = 1; int32 total_votes = 2; }
+message RateMovieRequest {
+  int64 movie_id = 1;
+  int64 user_id  = 2;
+  int32 score    = 3;
+}
+message RateMovieResponse {
+  bool   success       = 1;
+  double new_avg       = 2;
+  int64  total_votes   = 3;
+}
+
+message GetMovieRatingRequest  { int64 movie_id = 1; }
+message GetMovieRatingResponse { double avg_rating = 1; int64 total_votes = 2; }
 
 // Discovery
+
 message GetTopMoviesRequest    { int32 limit = 1; }
 message GetTopMoviesResponse   { repeated Movie movies = 1; }
 
-message GetSimilarMoviesRequest  { string movie_id = 1; int32 limit = 2; }
+message GetSimilarMoviesRequest  { int64 movie_id = 1; int32 limit = 2; }
 message GetSimilarMoviesResponse { repeated Movie movies = 1; }
