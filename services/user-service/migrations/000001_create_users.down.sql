@@ -1,0 +1,4 @@
+DROP TABLE IF EXISTS watch_history;
+DROP TABLE IF EXISTS watchlist;
+DROP TABLE IF EXISTS users;
+DROP EXTENSION IF EXISTS "uuid-ossp";

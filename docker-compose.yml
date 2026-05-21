@@ -32,7 +32,9 @@ services:
       - streaming-net
 
   user-service:
-    build: ./services/user-service
+    build:
+      context: .
+      dockerfile: services/user-service/Dockerfile
     container_name: user-service
     environment:
       DB_HOST: user-db
@@ -139,7 +141,9 @@ services:
       - streaming-net
 
   user-gateway:
-    build: ./gateway/user-gateway
+    build:
+      context: .
+      dockerfile: gateway/user-gateway/Dockerfile
     container_name: user-gateway
     environment:
       USER_SERVICE_ADDR: user-service:50051
