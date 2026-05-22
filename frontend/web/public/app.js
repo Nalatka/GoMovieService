@@ -1,5 +1,6 @@
 let session = JSON.parse(localStorage.getItem("session") || "null");
 let streamSession = JSON.parse(localStorage.getItem("streamSession") || "null");
+let activeTab = "movies";
 
 const $ = (id) => document.getElementById(id);
 const value = (form, key) => new FormData(form).get(key)?.toString().trim() || "";
@@ -17,8 +18,24 @@ function authHeaders() {
 async function api(path, options = {}) {
   const res = await fetch(path, {...options, headers: {...authHeaders(), ...(options.headers || {})}});
   const text = await res.text();
-  const data = text ? JSON.parse(text) : {};
-  if (!res.ok) throw new Error(data.error || res.statusText);
+  const contentType = res.headers.get("content-type") || "";
+  let data = {};
+  if (text) {
+    if (contentType.includes("application/json")) {
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = {message: text};
+      }
+    } else {
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = {message: text};
+      }
+    }
+  }
+  if (!res.ok) throw new Error(data.error || data.message || text || res.statusText);
   return data;
 }
 
@@ -30,12 +47,35 @@ function setSession(data) {
 
 function renderStatus() {
   $("status").textContent = session?.user ? `${session.user.username} | ${session.user.role || "user"} | ${session.user.id}` : "Not signed in";
+  syncAdminVisibility();
+}
+
+function isAdmin() {
+  return session?.user?.role === "admin";
+}
+
+function showTab(tab) {
+  if (tab === "admin" && !isAdmin()) {
+    log("Admin access required");
+    tab = "movies";
+  }
+  activeTab = tab;
+  document.querySelectorAll(".view").forEach((view) => view.classList.add("hidden"));
+  $(tab).classList.remove("hidden");
+}
+
+function syncAdminVisibility() {
+  const adminTab = $("adminTab");
+  const adminAllowed = isAdmin();
+  adminTab.classList.toggle("hidden", !adminAllowed);
+  if (!adminAllowed && activeTab === "admin") {
+    showTab("movies");
+  }
 }
 
 document.querySelectorAll("[data-tab]").forEach((button) => {
   button.addEventListener("click", () => {
-    document.querySelectorAll(".view").forEach((view) => view.classList.add("hidden"));
-    $(button.dataset.tab).classList.remove("hidden");
+    showTab(button.dataset.tab);
   });
 });
 
@@ -63,6 +103,7 @@ $("logout").addEventListener("click", async () => {
   session = null;
   localStorage.removeItem("session");
   renderStatus();
+  showTab("movies");
   log("Logged out");
 });
 
@@ -337,4 +378,5 @@ function attr(value) {
 }
 
 renderStatus();
+showTab(activeTab);
 loadMovies();
