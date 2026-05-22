@@ -106,9 +106,8 @@ func (s *Service) RegisterUser(ctx context.Context, email string, username strin
 		}
 	}
 	if s.email != nil {
-		if err := s.email.SendWelcome(ctx, user.Email, user.Username); err != nil {
-			return domain.User{}, "", err
-		}
+		// best-effort: email failure must not block registration
+		_ = s.email.SendWelcome(ctx, user.Email, user.Username)
 	}
 	return user, token, nil
 }

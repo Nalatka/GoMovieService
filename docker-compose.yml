@@ -45,6 +45,12 @@ services:
       REDIS_HOST: user-redis:6379
       NATS_URL: nats://nats:4222
       GRPC_PORT: 50051
+      # Gmail SMTP — use an App Password (Google Account → Security → App passwords)
+      SMTP_HOST: smtp.gmail.com
+      SMTP_PORT: 587
+      SMTP_USERNAME: peacediebull1@gmail.com
+      SMTP_PASSWORD: ruyr hyse zcwf cffh
+      SMTP_FROM: peacediebull1@gmail.com
     ports:
       - "50051:50051"
     depends_on:

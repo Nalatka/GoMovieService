@@ -2,10 +2,14 @@ package main
 
 import (
 	"database/sql"
+	"embed"
 	"fmt"
+	"io/fs"
 	"log"
 	"net"
 	"os"
+	"sort"
+	"strings"
 
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
@@ -16,6 +20,7 @@ import (
 	_ "github.com/lib/pq"
 
 	grpcDelivery "gomovieservice/services/content-service/internal/delivery/grpc"
+	dbmigrations "gomovieservice/services/content-service/migrations"
 	natsPkg "gomovieservice/services/content-service/internal/nats"
 	pgRepo "gomovieservice/services/content-service/internal/repository/postgres"
 	redisRepo "gomovieservice/services/content-service/internal/repository/redis"
@@ -42,6 +47,7 @@ func main() {
 		log.Fatalf("ping db: %v", err)
 	}
 	defer db.Close()
+	runMigrations(db, dbmigrations.FS)
 
 	// Redis
 	rdb := redis.NewClient(&redis.Options{
@@ -106,4 +112,60 @@ func firstNonEmpty(values ...string) string {
 		}
 	}
 	return ""
+}
+
+func runMigrations(db *sql.DB, fsys embed.FS) {
+	_, err := db.Exec(`CREATE TABLE IF NOT EXISTS schema_migrations (
+		name       TEXT PRIMARY KEY,
+		applied_at TIMESTAMPTZ DEFAULT NOW()
+	)`)
+	if err != nil {
+		log.Fatalf("create schema_migrations: %v", err)
+	}
+
+	entries, err := fs.ReadDir(fsys, ".")
+	if err != nil {
+		log.Fatalf("read migrations dir: %v", err)
+	}
+
+	var names []string
+	for _, e := range entries {
+		if !e.IsDir() && strings.HasSuffix(e.Name(), ".up.sql") {
+			names = append(names, e.Name())
+		}
+	}
+	sort.Strings(names)
+
+	for _, name := range names {
+		var applied bool
+		if err := db.QueryRow(
+			"SELECT EXISTS(SELECT 1 FROM schema_migrations WHERE name=$1)", name,
+		).Scan(&applied); err != nil {
+			log.Fatalf("check migration %s: %v", name, err)
+		}
+		if applied {
+			continue
+		}
+
+		sqlBytes, err := fs.ReadFile(fsys, name)
+		if err != nil {
+			log.Fatalf("read migration %s: %v", name, err)
+		}
+		tx, err := db.Begin()
+		if err != nil {
+			log.Fatalf("begin tx %s: %v", name, err)
+		}
+		if _, err := tx.Exec(string(sqlBytes)); err != nil {
+			_ = tx.Rollback()
+			log.Fatalf("exec migration %s: %v", name, err)
+		}
+		if _, err := tx.Exec("INSERT INTO schema_migrations(name) VALUES($1)", name); err != nil {
+			_ = tx.Rollback()
+			log.Fatalf("record migration %s: %v", name, err)
+		}
+		if err := tx.Commit(); err != nil {
+			log.Fatalf("commit migration %s: %v", name, err)
+		}
+		log.Printf("applied migration: %s", name)
+	}
 }
