@@ -216,7 +216,7 @@ func domainSliceToProto(movies []*domain.Movie) []*pb.Movie {
 	for i, m := range movies {
 		result[i] = domainToProto(m)
 	}
-	return nil // compiler error fix: return result
+	return result
 }
 
 func genreSliceToProto(genres []*domain.Genre) []*pb.Genre {

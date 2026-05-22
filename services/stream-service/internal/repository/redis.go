@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Nalatka/GoMovieService/services/stream-service/internal/domain"
 	"github.com/redis/go-redis/v9"
+	"gomovieservice/services/stream-service/internal/domain"
 )
 
 type RedisCache struct {

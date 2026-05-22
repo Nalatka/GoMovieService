@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Nalatka/GoMovieService/services/user-service/internal/domain"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
+	"gomovieservice/services/user-service/internal/domain"
 )
 
 var (
@@ -20,10 +20,10 @@ var (
 )
 
 type UserRepository interface {
-	CreateUser(ctx context.Context, email string, username string, passwordHash string) (domain.User, error)
+	CreateUser(ctx context.Context, email string, username string, passwordHash string, role string) (domain.User, error)
 	GetUserByID(ctx context.Context, id string) (domain.User, error)
 	GetUserByEmail(ctx context.Context, email string) (domain.User, error)
-	UpdateUser(ctx context.Context, id string, username string, email string) (domain.User, error)
+	UpdateUser(ctx context.Context, id string, username string, email string, role string) (domain.User, error)
 	DeleteUser(ctx context.Context, id string) error
 	GetWatchlist(ctx context.Context, userID string) ([]domain.WatchlistItem, error)
 	AddToWatchlist(ctx context.Context, userID string, movieID string) error
@@ -48,13 +48,14 @@ type EmailSender interface {
 }
 
 type Service struct {
-	repo       UserRepository
-	tokens     TokenStore
-	events     EventPublisher
-	email      EmailSender
-	jwtSecret  []byte
-	tokenTTL   time.Duration
-	bcryptCost int
+	repo        UserRepository
+	tokens      TokenStore
+	events      EventPublisher
+	email       EmailSender
+	jwtSecret   []byte
+	tokenTTL    time.Duration
+	bcryptCost  int
+	adminEmails map[string]bool
 }
 
 func NewService(repo UserRepository, tokens TokenStore, events EventPublisher, email EmailSender, jwtSecret string) *Service {
@@ -62,14 +63,19 @@ func NewService(repo UserRepository, tokens TokenStore, events EventPublisher, e
 		jwtSecret = "dev-secret"
 	}
 	return &Service{
-		repo:       repo,
-		tokens:     tokens,
-		events:     events,
-		email:      email,
-		jwtSecret:  []byte(jwtSecret),
-		tokenTTL:   24 * time.Hour,
-		bcryptCost: bcrypt.DefaultCost,
+		repo:        repo,
+		tokens:      tokens,
+		events:      events,
+		email:       email,
+		jwtSecret:   []byte(jwtSecret),
+		tokenTTL:    24 * time.Hour,
+		bcryptCost:  bcrypt.DefaultCost,
+		adminEmails: map[string]bool{},
 	}
+}
+
+func (s *Service) SetAdminEmails(emails string) {
+	s.adminEmails = parseAdminEmails(emails)
 }
 
 func (s *Service) RegisterUser(ctx context.Context, email string, username string, password string) (domain.User, string, error) {
@@ -82,11 +88,15 @@ func (s *Service) RegisterUser(ctx context.Context, email string, username strin
 	if err != nil {
 		return domain.User{}, "", err
 	}
-	user, err := s.repo.CreateUser(ctx, email, username, string(hash))
+	role := "user"
+	if s.adminEmails[email] {
+		role = "admin"
+	}
+	user, err := s.repo.CreateUser(ctx, email, username, string(hash), role)
 	if err != nil {
 		return domain.User{}, "", err
 	}
-	token, err := s.issueToken(ctx, user.ID)
+	token, err := s.issueToken(ctx, user)
 	if err != nil {
 		return domain.User{}, "", err
 	}
@@ -96,9 +106,8 @@ func (s *Service) RegisterUser(ctx context.Context, email string, username strin
 		}
 	}
 	if s.email != nil {
-		if err := s.email.SendWelcome(ctx, user.Email, user.Username); err != nil {
-			return domain.User{}, "", err
-		}
+		// best-effort: email failure must not block registration
+		_ = s.email.SendWelcome(ctx, user.Email, user.Username)
 	}
 	return user, token, nil
 }
@@ -118,7 +127,7 @@ func (s *Service) LoginUser(ctx context.Context, email string, password string) 
 	if bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)) != nil {
 		return domain.User{}, "", ErrInvalidCredentials
 	}
-	token, err := s.issueToken(ctx, user.ID)
+	token, err := s.issueToken(ctx, user)
 	if err != nil {
 		return domain.User{}, "", err
 	}
@@ -139,14 +148,18 @@ func (s *Service) GetUser(ctx context.Context, id string) (domain.User, error) {
 	return s.repo.GetUserByID(ctx, id)
 }
 
-func (s *Service) UpdateUser(ctx context.Context, id string, username string, email string) (domain.User, error) {
+func (s *Service) UpdateUser(ctx context.Context, id string, username string, email string, role string) (domain.User, error) {
 	id = strings.TrimSpace(id)
 	email = strings.TrimSpace(strings.ToLower(email))
 	username = strings.TrimSpace(username)
+	role = strings.TrimSpace(strings.ToLower(role))
 	if id == "" || email == "" || username == "" {
 		return domain.User{}, ErrInvalidInput
 	}
-	return s.repo.UpdateUser(ctx, id, username, email)
+	if role != "" && role != "user" && role != "admin" {
+		return domain.User{}, ErrInvalidInput
+	}
+	return s.repo.UpdateUser(ctx, id, username, email, role)
 }
 
 func (s *Service) DeleteUser(ctx context.Context, id string) error {
@@ -205,20 +218,32 @@ func (s *Service) GetRecommendations(ctx context.Context, userID string, limit i
 	return s.repo.GetRecommendations(ctx, userID, normalizeLimit(limit))
 }
 
-func (s *Service) issueToken(ctx context.Context, userID string) (string, error) {
+func (s *Service) issueToken(ctx context.Context, user domain.User) (string, error) {
 	claims := jwt.MapClaims{
-		"sub": userID,
-		"exp": time.Now().Add(s.tokenTTL).Unix(),
-		"iat": time.Now().Unix(),
+		"sub":  user.ID,
+		"role": user.Role,
+		"exp":  time.Now().Add(s.tokenTTL).Unix(),
+		"iat":  time.Now().Unix(),
 	}
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(s.jwtSecret)
 	if err != nil {
 		return "", err
 	}
-	if err := s.tokens.Save(ctx, token, userID, s.tokenTTL); err != nil {
+	if err := s.tokens.Save(ctx, token, user.ID, s.tokenTTL); err != nil {
 		return "", err
 	}
 	return token, nil
+}
+
+func parseAdminEmails(emails string) map[string]bool {
+	out := map[string]bool{}
+	for _, email := range strings.Split(emails, ",") {
+		email = strings.TrimSpace(strings.ToLower(email))
+		if email != "" {
+			out[email] = true
+		}
+	}
+	return out
 }
 
 func normalizeLimit(limit int32) int32 {

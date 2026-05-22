@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Nalatka/GoMovieService/services/user-service/internal/domain"
 	"golang.org/x/crypto/bcrypt"
+	"gomovieservice/services/user-service/internal/domain"
 )
 
 func TestRegisterUserCreatesUserTokenEventAndEmail(t *testing.T) {
@@ -26,6 +26,9 @@ func TestRegisterUserCreatesUserTokenEventAndEmail(t *testing.T) {
 	if user.Email != "a@example.com" {
 		t.Fatalf("email was not normalized: %s", user.Email)
 	}
+	if user.Role != "user" {
+		t.Fatalf("expected user role, got %s", user.Role)
+	}
 	if token == "" {
 		t.Fatal("token was empty")
 	}
@@ -40,6 +43,22 @@ func TestRegisterUserCreatesUserTokenEventAndEmail(t *testing.T) {
 	}
 	if bcrypt.CompareHashAndPassword([]byte(repo.users[user.ID].PasswordHash), []byte("password1")) != nil {
 		t.Fatal("password was not hashed correctly")
+	}
+}
+
+func TestRegisterUserAssignsAdminRoleFromConfiguredEmails(t *testing.T) {
+	ctx := context.Background()
+	repo := newFakeRepo()
+	service := NewService(repo, &fakeTokens{}, nil, nil, "secret")
+	service.bcryptCost = bcrypt.MinCost
+	service.SetAdminEmails("admin@example.com")
+
+	user, _, err := service.RegisterUser(ctx, "admin@example.com", "admin", "password1")
+	if err != nil {
+		t.Fatalf("RegisterUser returned error: %v", err)
+	}
+	if user.Role != "admin" {
+		t.Fatalf("expected admin role, got %s", user.Role)
 	}
 }
 
@@ -87,6 +106,25 @@ func TestLogoutUserDeletesToken(t *testing.T) {
 	}
 	if _, ok := tokens.saved["token"]; ok {
 		t.Fatal("token was not deleted")
+	}
+}
+
+func TestUpdateUserChangesRoleWhenProvided(t *testing.T) {
+	ctx := context.Background()
+	repo := newFakeRepo()
+	service := NewService(repo, &fakeTokens{}, &fakeEvents{}, &fakeEmail{}, "secret")
+	service.bcryptCost = bcrypt.MinCost
+
+	user, _, err := service.RegisterUser(ctx, "a@example.com", "aidana", "password1")
+	if err != nil {
+		t.Fatalf("register returned error: %v", err)
+	}
+	updated, err := service.UpdateUser(ctx, user.ID, "aidana2", "a2@example.com", "admin")
+	if err != nil {
+		t.Fatalf("UpdateUser returned error: %v", err)
+	}
+	if updated.Role != "admin" {
+		t.Fatalf("expected role admin, got %s", updated.Role)
 	}
 }
 
@@ -165,12 +203,12 @@ func newFakeRepo() *fakeRepo {
 	}
 }
 
-func (r *fakeRepo) CreateUser(_ context.Context, email string, username string, passwordHash string) (domain.User, error) {
+func (r *fakeRepo) CreateUser(_ context.Context, email string, username string, passwordHash string, role string) (domain.User, error) {
 	if _, ok := r.byEmail[email]; ok {
 		return domain.User{}, ErrConflict
 	}
 	r.next++
-	user := domain.User{ID: "user-1", Email: email, Username: username, PasswordHash: passwordHash, CreatedAt: time.Now(), UpdatedAt: time.Now()}
+	user := domain.User{ID: "user-1", Email: email, Username: username, PasswordHash: passwordHash, Role: role, CreatedAt: time.Now(), UpdatedAt: time.Now()}
 	if r.next > 1 {
 		user.ID = "user-2"
 	}
@@ -195,13 +233,16 @@ func (r *fakeRepo) GetUserByEmail(_ context.Context, email string) (domain.User,
 	return r.users[id], nil
 }
 
-func (r *fakeRepo) UpdateUser(_ context.Context, id string, username string, email string) (domain.User, error) {
+func (r *fakeRepo) UpdateUser(_ context.Context, id string, username string, email string, role string) (domain.User, error) {
 	user, ok := r.users[id]
 	if !ok {
 		return domain.User{}, ErrNotFound
 	}
 	user.Username = username
 	user.Email = email
+	if role != "" {
+		user.Role = role
+	}
 	r.users[id] = user
 	r.byEmail[email] = id
 	return user, nil

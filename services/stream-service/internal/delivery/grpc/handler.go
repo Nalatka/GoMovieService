@@ -2,11 +2,10 @@ package grpc
 
 import (
 	"context"
-	"errors"
 
-	streampb "github.com/Nalatka/GoMovieService/proto"
-	"github.com/Nalatka/GoMovieService/services/stream-service/internal/domain"
-	"github.com/Nalatka/GoMovieService/services/stream-service/internal/usecase"
+	streampb "github.com/Nalatka/GoMovieService/proto/stream"
+	"gomovieservice/services/stream-service/internal/domain"
+	"gomovieservice/services/stream-service/internal/usecase"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"

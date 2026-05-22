@@ -1,0 +1,194 @@
+:root {
+  color: #172033;
+  background: #f3f5f8;
+  font-family: Inter, Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 28px;
+  background: #ffffff;
+  border-bottom: 1px solid #d9e0ea;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+main {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 18px;
+}
+
+h1, h2, p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 28px;
+}
+
+h2 {
+  font-size: 17px;
+  margin-bottom: 12px;
+}
+
+nav, .toolbar, .actions, .columns {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+nav {
+  flex-wrap: wrap;
+}
+
+.panel {
+  background: #ffffff;
+  border: 1px solid #d9e0ea;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 14px;
+}
+
+.columns {
+  flex-wrap: wrap;
+}
+
+.search {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  min-width: 260px;
+}
+
+input, textarea, button {
+  box-sizing: border-box;
+  border-radius: 6px;
+  font: inherit;
+}
+
+input, textarea {
+  border: 1px solid #cbd5e1;
+  background: #fbfcfe;
+  padding: 10px;
+  min-width: 0;
+}
+
+textarea {
+  width: 100%;
+  min-height: 86px;
+  resize: vertical;
+}
+
+button {
+  border: 0;
+  background: #2563eb;
+  color: #ffffff;
+  padding: 10px 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+button:hover {
+  filter: brightness(0.96);
+}
+
+.neutral {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.danger {
+  background: #dc2626;
+}
+
+.hidden {
+  display: none;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.card, .item, .chip {
+  border: 1px solid #e1e7ef;
+  border-radius: 8px;
+  background: #fbfcfe;
+  padding: 12px;
+}
+
+.card strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.muted {
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.card .actions {
+  margin-top: 10px;
+  align-items: stretch;
+}
+
+.card button {
+  flex: 1;
+}
+
+.list {
+  display: grid;
+  gap: 8px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.chip {
+  cursor: pointer;
+}
+
+pre {
+  margin: 8px 0 0;
+  min-height: 52px;
+  white-space: pre-wrap;
+  color: #334155;
+}
+
+@media (max-width: 760px) {
+  header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .toolbar, .search {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  input, button {
+    width: 100%;
+  }
+}

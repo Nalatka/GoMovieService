@@ -160,7 +160,9 @@ func (uc *ContentUsecase) RateMovie(movieID, userID uuid.UUID, score int32) (flo
 	_ = uc.cache.DeleteMovie(movieID)
 	_ = uc.cache.InvalidateTop()
 
-	_ = uc.publisher.PublishMovieRated(movieID.String(), userID.String(), score, newAvg)
+	if uc.publisher != nil {
+		_ = uc.publisher.PublishMovieRated(movieID.String(), userID.String(), score, newAvg)
+	}
 
 	return newAvg, totalVotes, nil
 }

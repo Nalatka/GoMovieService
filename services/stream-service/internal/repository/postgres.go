@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Nalatka/GoMovieService/services/stream-service/internal/domain"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"gomovieservice/services/stream-service/internal/domain"
 )
 
 type PostgresRepository struct {
