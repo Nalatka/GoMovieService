@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v7.35.0
-// source: proto/content/content.proto
+// source: content/content.proto
 
 package content
 
@@ -24,11 +24,11 @@ const (
 
 type Movie struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Year          int32                  `protobuf:"varint,4,opt,name=year,proto3" json:"year,omitempty"`
-	GenreId       int64                  `protobuf:"varint,5,opt,name=genre_id,json=genreId,proto3" json:"genre_id,omitempty"`
+	GenreId       string                 `protobuf:"bytes,5,opt,name=genre_id,json=genreId,proto3" json:"genre_id,omitempty"`
 	GenreName     string                 `protobuf:"bytes,6,opt,name=genre_name,json=genreName,proto3" json:"genre_name,omitempty"`
 	VideoUrl      string                 `protobuf:"bytes,7,opt,name=video_url,json=videoUrl,proto3" json:"video_url,omitempty"`
 	PosterUrl     string                 `protobuf:"bytes,8,opt,name=poster_url,json=posterUrl,proto3" json:"poster_url,omitempty"`
@@ -42,7 +42,7 @@ type Movie struct {
 
 func (x *Movie) Reset() {
 	*x = Movie{}
-	mi := &file_proto_content_content_proto_msgTypes[0]
+	mi := &file_content_content_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -54,7 +54,7 @@ func (x *Movie) String() string {
 func (*Movie) ProtoMessage() {}
 
 func (x *Movie) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[0]
+	mi := &file_content_content_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -67,14 +67,14 @@ func (x *Movie) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Movie.ProtoReflect.Descriptor instead.
 func (*Movie) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{0}
+	return file_content_content_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Movie) GetId() int64 {
+func (x *Movie) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
 func (x *Movie) GetTitle() string {
@@ -98,11 +98,11 @@ func (x *Movie) GetYear() int32 {
 	return 0
 }
 
-func (x *Movie) GetGenreId() int64 {
+func (x *Movie) GetGenreId() string {
 	if x != nil {
 		return x.GenreId
 	}
-	return 0
+	return ""
 }
 
 func (x *Movie) GetGenreName() string {
@@ -156,7 +156,7 @@ func (x *Movie) GetCreatedAt() *timestamppb.Timestamp {
 
 type Genre struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -164,7 +164,7 @@ type Genre struct {
 
 func (x *Genre) Reset() {
 	*x = Genre{}
-	mi := &file_proto_content_content_proto_msgTypes[1]
+	mi := &file_content_content_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -176,7 +176,7 @@ func (x *Genre) String() string {
 func (*Genre) ProtoMessage() {}
 
 func (x *Genre) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[1]
+	mi := &file_content_content_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -189,14 +189,14 @@ func (x *Genre) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Genre.ProtoReflect.Descriptor instead.
 func (*Genre) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{1}
+	return file_content_content_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Genre) GetId() int64 {
+func (x *Genre) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
 func (x *Genre) GetName() string {
@@ -211,7 +211,7 @@ type CreateMovieRequest struct {
 	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
 	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
 	Year          int32                  `protobuf:"varint,3,opt,name=year,proto3" json:"year,omitempty"`
-	GenreId       int64                  `protobuf:"varint,4,opt,name=genre_id,json=genreId,proto3" json:"genre_id,omitempty"`
+	GenreId       string                 `protobuf:"bytes,4,opt,name=genre_id,json=genreId,proto3" json:"genre_id,omitempty"`
 	VideoUrl      string                 `protobuf:"bytes,5,opt,name=video_url,json=videoUrl,proto3" json:"video_url,omitempty"`
 	PosterUrl     string                 `protobuf:"bytes,6,opt,name=poster_url,json=posterUrl,proto3" json:"poster_url,omitempty"`
 	DurationSec   int32                  `protobuf:"varint,7,opt,name=duration_sec,json=durationSec,proto3" json:"duration_sec,omitempty"`
@@ -221,7 +221,7 @@ type CreateMovieRequest struct {
 
 func (x *CreateMovieRequest) Reset() {
 	*x = CreateMovieRequest{}
-	mi := &file_proto_content_content_proto_msgTypes[2]
+	mi := &file_content_content_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -233,7 +233,7 @@ func (x *CreateMovieRequest) String() string {
 func (*CreateMovieRequest) ProtoMessage() {}
 
 func (x *CreateMovieRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[2]
+	mi := &file_content_content_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -246,7 +246,7 @@ func (x *CreateMovieRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateMovieRequest.ProtoReflect.Descriptor instead.
 func (*CreateMovieRequest) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{2}
+	return file_content_content_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CreateMovieRequest) GetTitle() string {
@@ -270,11 +270,11 @@ func (x *CreateMovieRequest) GetYear() int32 {
 	return 0
 }
 
-func (x *CreateMovieRequest) GetGenreId() int64 {
+func (x *CreateMovieRequest) GetGenreId() string {
 	if x != nil {
 		return x.GenreId
 	}
-	return 0
+	return ""
 }
 
 func (x *CreateMovieRequest) GetVideoUrl() string {
@@ -307,7 +307,7 @@ type CreateMovieResponse struct {
 
 func (x *CreateMovieResponse) Reset() {
 	*x = CreateMovieResponse{}
-	mi := &file_proto_content_content_proto_msgTypes[3]
+	mi := &file_content_content_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -319,7 +319,7 @@ func (x *CreateMovieResponse) String() string {
 func (*CreateMovieResponse) ProtoMessage() {}
 
 func (x *CreateMovieResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[3]
+	mi := &file_content_content_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -332,7 +332,7 @@ func (x *CreateMovieResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateMovieResponse.ProtoReflect.Descriptor instead.
 func (*CreateMovieResponse) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{3}
+	return file_content_content_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CreateMovieResponse) GetMovie() *Movie {
@@ -344,14 +344,14 @@ func (x *CreateMovieResponse) GetMovie() *Movie {
 
 type GetMovieRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MovieId       int64                  `protobuf:"varint,1,opt,name=movie_id,json=movieId,proto3" json:"movie_id,omitempty"`
+	MovieId       string                 `protobuf:"bytes,1,opt,name=movie_id,json=movieId,proto3" json:"movie_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetMovieRequest) Reset() {
 	*x = GetMovieRequest{}
-	mi := &file_proto_content_content_proto_msgTypes[4]
+	mi := &file_content_content_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -363,7 +363,7 @@ func (x *GetMovieRequest) String() string {
 func (*GetMovieRequest) ProtoMessage() {}
 
 func (x *GetMovieRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[4]
+	mi := &file_content_content_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -376,14 +376,14 @@ func (x *GetMovieRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMovieRequest.ProtoReflect.Descriptor instead.
 func (*GetMovieRequest) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{4}
+	return file_content_content_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *GetMovieRequest) GetMovieId() int64 {
+func (x *GetMovieRequest) GetMovieId() string {
 	if x != nil {
 		return x.MovieId
 	}
-	return 0
+	return ""
 }
 
 type GetMovieResponse struct {
@@ -395,7 +395,7 @@ type GetMovieResponse struct {
 
 func (x *GetMovieResponse) Reset() {
 	*x = GetMovieResponse{}
-	mi := &file_proto_content_content_proto_msgTypes[5]
+	mi := &file_content_content_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -407,7 +407,7 @@ func (x *GetMovieResponse) String() string {
 func (*GetMovieResponse) ProtoMessage() {}
 
 func (x *GetMovieResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[5]
+	mi := &file_content_content_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -420,7 +420,7 @@ func (x *GetMovieResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMovieResponse.ProtoReflect.Descriptor instead.
 func (*GetMovieResponse) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{5}
+	return file_content_content_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetMovieResponse) GetMovie() *Movie {
@@ -432,11 +432,11 @@ func (x *GetMovieResponse) GetMovie() *Movie {
 
 type UpdateMovieRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MovieId       int64                  `protobuf:"varint,1,opt,name=movie_id,json=movieId,proto3" json:"movie_id,omitempty"`
+	MovieId       string                 `protobuf:"bytes,1,opt,name=movie_id,json=movieId,proto3" json:"movie_id,omitempty"`
 	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Year          int32                  `protobuf:"varint,4,opt,name=year,proto3" json:"year,omitempty"`
-	GenreId       int64                  `protobuf:"varint,5,opt,name=genre_id,json=genreId,proto3" json:"genre_id,omitempty"`
+	GenreId       string                 `protobuf:"bytes,5,opt,name=genre_id,json=genreId,proto3" json:"genre_id,omitempty"`
 	VideoUrl      string                 `protobuf:"bytes,6,opt,name=video_url,json=videoUrl,proto3" json:"video_url,omitempty"`
 	PosterUrl     string                 `protobuf:"bytes,7,opt,name=poster_url,json=posterUrl,proto3" json:"poster_url,omitempty"`
 	DurationSec   int32                  `protobuf:"varint,8,opt,name=duration_sec,json=durationSec,proto3" json:"duration_sec,omitempty"`
@@ -446,7 +446,7 @@ type UpdateMovieRequest struct {
 
 func (x *UpdateMovieRequest) Reset() {
 	*x = UpdateMovieRequest{}
-	mi := &file_proto_content_content_proto_msgTypes[6]
+	mi := &file_content_content_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -458,7 +458,7 @@ func (x *UpdateMovieRequest) String() string {
 func (*UpdateMovieRequest) ProtoMessage() {}
 
 func (x *UpdateMovieRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[6]
+	mi := &file_content_content_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -471,14 +471,14 @@ func (x *UpdateMovieRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateMovieRequest.ProtoReflect.Descriptor instead.
 func (*UpdateMovieRequest) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{6}
+	return file_content_content_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *UpdateMovieRequest) GetMovieId() int64 {
+func (x *UpdateMovieRequest) GetMovieId() string {
 	if x != nil {
 		return x.MovieId
 	}
-	return 0
+	return ""
 }
 
 func (x *UpdateMovieRequest) GetTitle() string {
@@ -502,11 +502,11 @@ func (x *UpdateMovieRequest) GetYear() int32 {
 	return 0
 }
 
-func (x *UpdateMovieRequest) GetGenreId() int64 {
+func (x *UpdateMovieRequest) GetGenreId() string {
 	if x != nil {
 		return x.GenreId
 	}
-	return 0
+	return ""
 }
 
 func (x *UpdateMovieRequest) GetVideoUrl() string {
@@ -539,7 +539,7 @@ type UpdateMovieResponse struct {
 
 func (x *UpdateMovieResponse) Reset() {
 	*x = UpdateMovieResponse{}
-	mi := &file_proto_content_content_proto_msgTypes[7]
+	mi := &file_content_content_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -551,7 +551,7 @@ func (x *UpdateMovieResponse) String() string {
 func (*UpdateMovieResponse) ProtoMessage() {}
 
 func (x *UpdateMovieResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[7]
+	mi := &file_content_content_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -564,7 +564,7 @@ func (x *UpdateMovieResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateMovieResponse.ProtoReflect.Descriptor instead.
 func (*UpdateMovieResponse) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{7}
+	return file_content_content_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *UpdateMovieResponse) GetMovie() *Movie {
@@ -576,14 +576,14 @@ func (x *UpdateMovieResponse) GetMovie() *Movie {
 
 type DeleteMovieRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MovieId       int64                  `protobuf:"varint,1,opt,name=movie_id,json=movieId,proto3" json:"movie_id,omitempty"`
+	MovieId       string                 `protobuf:"bytes,1,opt,name=movie_id,json=movieId,proto3" json:"movie_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DeleteMovieRequest) Reset() {
 	*x = DeleteMovieRequest{}
-	mi := &file_proto_content_content_proto_msgTypes[8]
+	mi := &file_content_content_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -595,7 +595,7 @@ func (x *DeleteMovieRequest) String() string {
 func (*DeleteMovieRequest) ProtoMessage() {}
 
 func (x *DeleteMovieRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[8]
+	mi := &file_content_content_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -608,14 +608,14 @@ func (x *DeleteMovieRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteMovieRequest.ProtoReflect.Descriptor instead.
 func (*DeleteMovieRequest) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{8}
+	return file_content_content_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *DeleteMovieRequest) GetMovieId() int64 {
+func (x *DeleteMovieRequest) GetMovieId() string {
 	if x != nil {
 		return x.MovieId
 	}
-	return 0
+	return ""
 }
 
 type DeleteMovieResponse struct {
@@ -627,7 +627,7 @@ type DeleteMovieResponse struct {
 
 func (x *DeleteMovieResponse) Reset() {
 	*x = DeleteMovieResponse{}
-	mi := &file_proto_content_content_proto_msgTypes[9]
+	mi := &file_content_content_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -639,7 +639,7 @@ func (x *DeleteMovieResponse) String() string {
 func (*DeleteMovieResponse) ProtoMessage() {}
 
 func (x *DeleteMovieResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[9]
+	mi := &file_content_content_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -652,7 +652,7 @@ func (x *DeleteMovieResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteMovieResponse.ProtoReflect.Descriptor instead.
 func (*DeleteMovieResponse) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{9}
+	return file_content_content_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *DeleteMovieResponse) GetSuccess() bool {
@@ -672,7 +672,7 @@ type ListMoviesRequest struct {
 
 func (x *ListMoviesRequest) Reset() {
 	*x = ListMoviesRequest{}
-	mi := &file_proto_content_content_proto_msgTypes[10]
+	mi := &file_content_content_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -684,7 +684,7 @@ func (x *ListMoviesRequest) String() string {
 func (*ListMoviesRequest) ProtoMessage() {}
 
 func (x *ListMoviesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[10]
+	mi := &file_content_content_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -697,7 +697,7 @@ func (x *ListMoviesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMoviesRequest.ProtoReflect.Descriptor instead.
 func (*ListMoviesRequest) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{10}
+	return file_content_content_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ListMoviesRequest) GetPage() int32 {
@@ -724,7 +724,7 @@ type ListMoviesResponse struct {
 
 func (x *ListMoviesResponse) Reset() {
 	*x = ListMoviesResponse{}
-	mi := &file_proto_content_content_proto_msgTypes[11]
+	mi := &file_content_content_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -736,7 +736,7 @@ func (x *ListMoviesResponse) String() string {
 func (*ListMoviesResponse) ProtoMessage() {}
 
 func (x *ListMoviesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[11]
+	mi := &file_content_content_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -749,7 +749,7 @@ func (x *ListMoviesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMoviesResponse.ProtoReflect.Descriptor instead.
 func (*ListMoviesResponse) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{11}
+	return file_content_content_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ListMoviesResponse) GetMovies() []*Movie {
@@ -777,7 +777,7 @@ type SearchMoviesRequest struct {
 
 func (x *SearchMoviesRequest) Reset() {
 	*x = SearchMoviesRequest{}
-	mi := &file_proto_content_content_proto_msgTypes[12]
+	mi := &file_content_content_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -789,7 +789,7 @@ func (x *SearchMoviesRequest) String() string {
 func (*SearchMoviesRequest) ProtoMessage() {}
 
 func (x *SearchMoviesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[12]
+	mi := &file_content_content_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -802,7 +802,7 @@ func (x *SearchMoviesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SearchMoviesRequest.ProtoReflect.Descriptor instead.
 func (*SearchMoviesRequest) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{12}
+	return file_content_content_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *SearchMoviesRequest) GetQuery() string {
@@ -836,7 +836,7 @@ type SearchMoviesResponse struct {
 
 func (x *SearchMoviesResponse) Reset() {
 	*x = SearchMoviesResponse{}
-	mi := &file_proto_content_content_proto_msgTypes[13]
+	mi := &file_content_content_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -848,7 +848,7 @@ func (x *SearchMoviesResponse) String() string {
 func (*SearchMoviesResponse) ProtoMessage() {}
 
 func (x *SearchMoviesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[13]
+	mi := &file_content_content_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -861,7 +861,7 @@ func (x *SearchMoviesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SearchMoviesResponse.ProtoReflect.Descriptor instead.
 func (*SearchMoviesResponse) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{13}
+	return file_content_content_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *SearchMoviesResponse) GetMovies() []*Movie {
@@ -886,7 +886,7 @@ type GetGenresRequest struct {
 
 func (x *GetGenresRequest) Reset() {
 	*x = GetGenresRequest{}
-	mi := &file_proto_content_content_proto_msgTypes[14]
+	mi := &file_content_content_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -898,7 +898,7 @@ func (x *GetGenresRequest) String() string {
 func (*GetGenresRequest) ProtoMessage() {}
 
 func (x *GetGenresRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[14]
+	mi := &file_content_content_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -911,7 +911,7 @@ func (x *GetGenresRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetGenresRequest.ProtoReflect.Descriptor instead.
 func (*GetGenresRequest) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{14}
+	return file_content_content_proto_rawDescGZIP(), []int{14}
 }
 
 type GetGenresResponse struct {
@@ -923,7 +923,7 @@ type GetGenresResponse struct {
 
 func (x *GetGenresResponse) Reset() {
 	*x = GetGenresResponse{}
-	mi := &file_proto_content_content_proto_msgTypes[15]
+	mi := &file_content_content_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -935,7 +935,7 @@ func (x *GetGenresResponse) String() string {
 func (*GetGenresResponse) ProtoMessage() {}
 
 func (x *GetGenresResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[15]
+	mi := &file_content_content_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -948,7 +948,7 @@ func (x *GetGenresResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetGenresResponse.ProtoReflect.Descriptor instead.
 func (*GetGenresResponse) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{15}
+	return file_content_content_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *GetGenresResponse) GetGenres() []*Genre {
@@ -960,7 +960,7 @@ func (x *GetGenresResponse) GetGenres() []*Genre {
 
 type GetMoviesByGenreRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	GenreId       int64                  `protobuf:"varint,1,opt,name=genre_id,json=genreId,proto3" json:"genre_id,omitempty"`
+	GenreId       string                 `protobuf:"bytes,1,opt,name=genre_id,json=genreId,proto3" json:"genre_id,omitempty"`
 	Page          int32                  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
 	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -969,7 +969,7 @@ type GetMoviesByGenreRequest struct {
 
 func (x *GetMoviesByGenreRequest) Reset() {
 	*x = GetMoviesByGenreRequest{}
-	mi := &file_proto_content_content_proto_msgTypes[16]
+	mi := &file_content_content_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -981,7 +981,7 @@ func (x *GetMoviesByGenreRequest) String() string {
 func (*GetMoviesByGenreRequest) ProtoMessage() {}
 
 func (x *GetMoviesByGenreRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[16]
+	mi := &file_content_content_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -994,14 +994,14 @@ func (x *GetMoviesByGenreRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMoviesByGenreRequest.ProtoReflect.Descriptor instead.
 func (*GetMoviesByGenreRequest) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{16}
+	return file_content_content_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *GetMoviesByGenreRequest) GetGenreId() int64 {
+func (x *GetMoviesByGenreRequest) GetGenreId() string {
 	if x != nil {
 		return x.GenreId
 	}
-	return 0
+	return ""
 }
 
 func (x *GetMoviesByGenreRequest) GetPage() int32 {
@@ -1028,7 +1028,7 @@ type GetMoviesByGenreResponse struct {
 
 func (x *GetMoviesByGenreResponse) Reset() {
 	*x = GetMoviesByGenreResponse{}
-	mi := &file_proto_content_content_proto_msgTypes[17]
+	mi := &file_content_content_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1040,7 +1040,7 @@ func (x *GetMoviesByGenreResponse) String() string {
 func (*GetMoviesByGenreResponse) ProtoMessage() {}
 
 func (x *GetMoviesByGenreResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[17]
+	mi := &file_content_content_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1053,7 +1053,7 @@ func (x *GetMoviesByGenreResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMoviesByGenreResponse.ProtoReflect.Descriptor instead.
 func (*GetMoviesByGenreResponse) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{17}
+	return file_content_content_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *GetMoviesByGenreResponse) GetMovies() []*Movie {
@@ -1072,8 +1072,8 @@ func (x *GetMoviesByGenreResponse) GetTotal() int32 {
 
 type RateMovieRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MovieId       int64                  `protobuf:"varint,1,opt,name=movie_id,json=movieId,proto3" json:"movie_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	MovieId       string                 `protobuf:"bytes,1,opt,name=movie_id,json=movieId,proto3" json:"movie_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Score         int32                  `protobuf:"varint,3,opt,name=score,proto3" json:"score,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1081,7 +1081,7 @@ type RateMovieRequest struct {
 
 func (x *RateMovieRequest) Reset() {
 	*x = RateMovieRequest{}
-	mi := &file_proto_content_content_proto_msgTypes[18]
+	mi := &file_content_content_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1093,7 +1093,7 @@ func (x *RateMovieRequest) String() string {
 func (*RateMovieRequest) ProtoMessage() {}
 
 func (x *RateMovieRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[18]
+	mi := &file_content_content_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1106,21 +1106,21 @@ func (x *RateMovieRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RateMovieRequest.ProtoReflect.Descriptor instead.
 func (*RateMovieRequest) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{18}
+	return file_content_content_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *RateMovieRequest) GetMovieId() int64 {
+func (x *RateMovieRequest) GetMovieId() string {
 	if x != nil {
 		return x.MovieId
 	}
-	return 0
+	return ""
 }
 
-func (x *RateMovieRequest) GetUserId() int64 {
+func (x *RateMovieRequest) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
 func (x *RateMovieRequest) GetScore() int32 {
@@ -1141,7 +1141,7 @@ type RateMovieResponse struct {
 
 func (x *RateMovieResponse) Reset() {
 	*x = RateMovieResponse{}
-	mi := &file_proto_content_content_proto_msgTypes[19]
+	mi := &file_content_content_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1153,7 +1153,7 @@ func (x *RateMovieResponse) String() string {
 func (*RateMovieResponse) ProtoMessage() {}
 
 func (x *RateMovieResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[19]
+	mi := &file_content_content_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1166,7 +1166,7 @@ func (x *RateMovieResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RateMovieResponse.ProtoReflect.Descriptor instead.
 func (*RateMovieResponse) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{19}
+	return file_content_content_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *RateMovieResponse) GetSuccess() bool {
@@ -1192,14 +1192,14 @@ func (x *RateMovieResponse) GetTotalVotes() int64 {
 
 type GetMovieRatingRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MovieId       int64                  `protobuf:"varint,1,opt,name=movie_id,json=movieId,proto3" json:"movie_id,omitempty"`
+	MovieId       string                 `protobuf:"bytes,1,opt,name=movie_id,json=movieId,proto3" json:"movie_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetMovieRatingRequest) Reset() {
 	*x = GetMovieRatingRequest{}
-	mi := &file_proto_content_content_proto_msgTypes[20]
+	mi := &file_content_content_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1211,7 +1211,7 @@ func (x *GetMovieRatingRequest) String() string {
 func (*GetMovieRatingRequest) ProtoMessage() {}
 
 func (x *GetMovieRatingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[20]
+	mi := &file_content_content_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1224,14 +1224,14 @@ func (x *GetMovieRatingRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMovieRatingRequest.ProtoReflect.Descriptor instead.
 func (*GetMovieRatingRequest) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{20}
+	return file_content_content_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *GetMovieRatingRequest) GetMovieId() int64 {
+func (x *GetMovieRatingRequest) GetMovieId() string {
 	if x != nil {
 		return x.MovieId
 	}
-	return 0
+	return ""
 }
 
 type GetMovieRatingResponse struct {
@@ -1244,7 +1244,7 @@ type GetMovieRatingResponse struct {
 
 func (x *GetMovieRatingResponse) Reset() {
 	*x = GetMovieRatingResponse{}
-	mi := &file_proto_content_content_proto_msgTypes[21]
+	mi := &file_content_content_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1256,7 +1256,7 @@ func (x *GetMovieRatingResponse) String() string {
 func (*GetMovieRatingResponse) ProtoMessage() {}
 
 func (x *GetMovieRatingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[21]
+	mi := &file_content_content_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1269,7 +1269,7 @@ func (x *GetMovieRatingResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMovieRatingResponse.ProtoReflect.Descriptor instead.
 func (*GetMovieRatingResponse) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{21}
+	return file_content_content_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *GetMovieRatingResponse) GetAvgRating() float64 {
@@ -1295,7 +1295,7 @@ type GetTopMoviesRequest struct {
 
 func (x *GetTopMoviesRequest) Reset() {
 	*x = GetTopMoviesRequest{}
-	mi := &file_proto_content_content_proto_msgTypes[22]
+	mi := &file_content_content_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1307,7 +1307,7 @@ func (x *GetTopMoviesRequest) String() string {
 func (*GetTopMoviesRequest) ProtoMessage() {}
 
 func (x *GetTopMoviesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[22]
+	mi := &file_content_content_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1320,7 +1320,7 @@ func (x *GetTopMoviesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTopMoviesRequest.ProtoReflect.Descriptor instead.
 func (*GetTopMoviesRequest) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{22}
+	return file_content_content_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *GetTopMoviesRequest) GetLimit() int32 {
@@ -1339,7 +1339,7 @@ type GetTopMoviesResponse struct {
 
 func (x *GetTopMoviesResponse) Reset() {
 	*x = GetTopMoviesResponse{}
-	mi := &file_proto_content_content_proto_msgTypes[23]
+	mi := &file_content_content_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1351,7 +1351,7 @@ func (x *GetTopMoviesResponse) String() string {
 func (*GetTopMoviesResponse) ProtoMessage() {}
 
 func (x *GetTopMoviesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[23]
+	mi := &file_content_content_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1364,7 +1364,7 @@ func (x *GetTopMoviesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTopMoviesResponse.ProtoReflect.Descriptor instead.
 func (*GetTopMoviesResponse) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{23}
+	return file_content_content_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *GetTopMoviesResponse) GetMovies() []*Movie {
@@ -1376,7 +1376,7 @@ func (x *GetTopMoviesResponse) GetMovies() []*Movie {
 
 type GetSimilarMoviesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MovieId       int64                  `protobuf:"varint,1,opt,name=movie_id,json=movieId,proto3" json:"movie_id,omitempty"`
+	MovieId       string                 `protobuf:"bytes,1,opt,name=movie_id,json=movieId,proto3" json:"movie_id,omitempty"`
 	Limit         int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1384,7 +1384,7 @@ type GetSimilarMoviesRequest struct {
 
 func (x *GetSimilarMoviesRequest) Reset() {
 	*x = GetSimilarMoviesRequest{}
-	mi := &file_proto_content_content_proto_msgTypes[24]
+	mi := &file_content_content_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1396,7 +1396,7 @@ func (x *GetSimilarMoviesRequest) String() string {
 func (*GetSimilarMoviesRequest) ProtoMessage() {}
 
 func (x *GetSimilarMoviesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[24]
+	mi := &file_content_content_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1409,14 +1409,14 @@ func (x *GetSimilarMoviesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSimilarMoviesRequest.ProtoReflect.Descriptor instead.
 func (*GetSimilarMoviesRequest) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{24}
+	return file_content_content_proto_rawDescGZIP(), []int{24}
 }
 
-func (x *GetSimilarMoviesRequest) GetMovieId() int64 {
+func (x *GetSimilarMoviesRequest) GetMovieId() string {
 	if x != nil {
 		return x.MovieId
 	}
-	return 0
+	return ""
 }
 
 func (x *GetSimilarMoviesRequest) GetLimit() int32 {
@@ -1435,7 +1435,7 @@ type GetSimilarMoviesResponse struct {
 
 func (x *GetSimilarMoviesResponse) Reset() {
 	*x = GetSimilarMoviesResponse{}
-	mi := &file_proto_content_content_proto_msgTypes[25]
+	mi := &file_content_content_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1447,7 +1447,7 @@ func (x *GetSimilarMoviesResponse) String() string {
 func (*GetSimilarMoviesResponse) ProtoMessage() {}
 
 func (x *GetSimilarMoviesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_content_content_proto_msgTypes[25]
+	mi := &file_content_content_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1460,7 +1460,7 @@ func (x *GetSimilarMoviesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSimilarMoviesResponse.ProtoReflect.Descriptor instead.
 func (*GetSimilarMoviesResponse) Descriptor() ([]byte, []int) {
-	return file_proto_content_content_proto_rawDescGZIP(), []int{25}
+	return file_content_content_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *GetSimilarMoviesResponse) GetMovies() []*Movie {
@@ -1470,17 +1470,17 @@ func (x *GetSimilarMoviesResponse) GetMovies() []*Movie {
 	return nil
 }
 
-var File_proto_content_content_proto protoreflect.FileDescriptor
+var File_content_content_proto protoreflect.FileDescriptor
 
-const file_proto_content_content_proto_rawDesc = "" +
+const file_content_content_proto_rawDesc = "" +
 	"\n" +
-	"\x1bproto/content/content.proto\x12\acontent\x1a\x1fgoogle/protobuf/timestamp.proto\"\xec\x02\n" +
+	"\x15content/content.proto\x12\acontent\x1a\x1fgoogle/protobuf/timestamp.proto\"\xec\x02\n" +
 	"\x05Movie\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x12\n" +
 	"\x04year\x18\x04 \x01(\x05R\x04year\x12\x19\n" +
-	"\bgenre_id\x18\x05 \x01(\x03R\agenreId\x12\x1d\n" +
+	"\bgenre_id\x18\x05 \x01(\tR\agenreId\x12\x1d\n" +
 	"\n" +
 	"genre_name\x18\x06 \x01(\tR\tgenreName\x12\x1b\n" +
 	"\tvideo_url\x18\a \x01(\tR\bvideoUrl\x12\x1d\n" +
@@ -1494,13 +1494,13 @@ const file_proto_content_content_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"+\n" +
 	"\x05Genre\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"\xda\x01\n" +
 	"\x12CreateMovieRequest\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x12\n" +
 	"\x04year\x18\x03 \x01(\x05R\x04year\x12\x19\n" +
-	"\bgenre_id\x18\x04 \x01(\x03R\agenreId\x12\x1b\n" +
+	"\bgenre_id\x18\x04 \x01(\tR\agenreId\x12\x1b\n" +
 	"\tvideo_url\x18\x05 \x01(\tR\bvideoUrl\x12\x1d\n" +
 	"\n" +
 	"poster_url\x18\x06 \x01(\tR\tposterUrl\x12!\n" +
@@ -1508,15 +1508,15 @@ const file_proto_content_content_proto_rawDesc = "" +
 	"\x13CreateMovieResponse\x12$\n" +
 	"\x05movie\x18\x01 \x01(\v2\x0e.content.MovieR\x05movie\",\n" +
 	"\x0fGetMovieRequest\x12\x19\n" +
-	"\bmovie_id\x18\x01 \x01(\x03R\amovieId\"8\n" +
+	"\bmovie_id\x18\x01 \x01(\tR\amovieId\"8\n" +
 	"\x10GetMovieResponse\x12$\n" +
 	"\x05movie\x18\x01 \x01(\v2\x0e.content.MovieR\x05movie\"\xf5\x01\n" +
 	"\x12UpdateMovieRequest\x12\x19\n" +
-	"\bmovie_id\x18\x01 \x01(\x03R\amovieId\x12\x14\n" +
+	"\bmovie_id\x18\x01 \x01(\tR\amovieId\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x12\n" +
 	"\x04year\x18\x04 \x01(\x05R\x04year\x12\x19\n" +
-	"\bgenre_id\x18\x05 \x01(\x03R\agenreId\x12\x1b\n" +
+	"\bgenre_id\x18\x05 \x01(\tR\agenreId\x12\x1b\n" +
 	"\tvideo_url\x18\x06 \x01(\tR\bvideoUrl\x12\x1d\n" +
 	"\n" +
 	"poster_url\x18\a \x01(\tR\tposterUrl\x12!\n" +
@@ -1524,7 +1524,7 @@ const file_proto_content_content_proto_rawDesc = "" +
 	"\x13UpdateMovieResponse\x12$\n" +
 	"\x05movie\x18\x01 \x01(\v2\x0e.content.MovieR\x05movie\"/\n" +
 	"\x12DeleteMovieRequest\x12\x19\n" +
-	"\bmovie_id\x18\x01 \x01(\x03R\amovieId\"/\n" +
+	"\bmovie_id\x18\x01 \x01(\tR\amovieId\"/\n" +
 	"\x13DeleteMovieResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"=\n" +
 	"\x11ListMoviesRequest\x12\x12\n" +
@@ -1544,15 +1544,15 @@ const file_proto_content_content_proto_rawDesc = "" +
 	"\x11GetGenresResponse\x12&\n" +
 	"\x06genres\x18\x01 \x03(\v2\x0e.content.GenreR\x06genres\"^\n" +
 	"\x17GetMoviesByGenreRequest\x12\x19\n" +
-	"\bgenre_id\x18\x01 \x01(\x03R\agenreId\x12\x12\n" +
+	"\bgenre_id\x18\x01 \x01(\tR\agenreId\x12\x12\n" +
 	"\x04page\x18\x02 \x01(\x05R\x04page\x12\x14\n" +
 	"\x05limit\x18\x03 \x01(\x05R\x05limit\"X\n" +
 	"\x18GetMoviesByGenreResponse\x12&\n" +
 	"\x06movies\x18\x01 \x03(\v2\x0e.content.MovieR\x06movies\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"\\\n" +
 	"\x10RateMovieRequest\x12\x19\n" +
-	"\bmovie_id\x18\x01 \x01(\x03R\amovieId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x14\n" +
+	"\bmovie_id\x18\x01 \x01(\tR\amovieId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x14\n" +
 	"\x05score\x18\x03 \x01(\x05R\x05score\"g\n" +
 	"\x11RateMovieResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x17\n" +
@@ -1560,7 +1560,7 @@ const file_proto_content_content_proto_rawDesc = "" +
 	"\vtotal_votes\x18\x03 \x01(\x03R\n" +
 	"totalVotes\"2\n" +
 	"\x15GetMovieRatingRequest\x12\x19\n" +
-	"\bmovie_id\x18\x01 \x01(\x03R\amovieId\"X\n" +
+	"\bmovie_id\x18\x01 \x01(\tR\amovieId\"X\n" +
 	"\x16GetMovieRatingResponse\x12\x1d\n" +
 	"\n" +
 	"avg_rating\x18\x01 \x01(\x01R\tavgRating\x12\x1f\n" +
@@ -1571,7 +1571,7 @@ const file_proto_content_content_proto_rawDesc = "" +
 	"\x14GetTopMoviesResponse\x12&\n" +
 	"\x06movies\x18\x01 \x03(\v2\x0e.content.MovieR\x06movies\"J\n" +
 	"\x17GetSimilarMoviesRequest\x12\x19\n" +
-	"\bmovie_id\x18\x01 \x01(\x03R\amovieId\x12\x14\n" +
+	"\bmovie_id\x18\x01 \x01(\tR\amovieId\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\"B\n" +
 	"\x18GetSimilarMoviesResponse\x12&\n" +
 	"\x06movies\x18\x01 \x03(\v2\x0e.content.MovieR\x06movies2\x9d\a\n" +
@@ -1591,19 +1591,19 @@ const file_proto_content_content_proto_rawDesc = "" +
 	"\x10GetSimilarMovies\x12 .content.GetSimilarMoviesRequest\x1a!.content.GetSimilarMoviesResponseB1Z/github.com/Nalatka/GoMovieService/proto/contentb\x06proto3"
 
 var (
-	file_proto_content_content_proto_rawDescOnce sync.Once
-	file_proto_content_content_proto_rawDescData []byte
+	file_content_content_proto_rawDescOnce sync.Once
+	file_content_content_proto_rawDescData []byte
 )
 
-func file_proto_content_content_proto_rawDescGZIP() []byte {
-	file_proto_content_content_proto_rawDescOnce.Do(func() {
-		file_proto_content_content_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_content_content_proto_rawDesc), len(file_proto_content_content_proto_rawDesc)))
+func file_content_content_proto_rawDescGZIP() []byte {
+	file_content_content_proto_rawDescOnce.Do(func() {
+		file_content_content_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_content_content_proto_rawDesc), len(file_content_content_proto_rawDesc)))
 	})
-	return file_proto_content_content_proto_rawDescData
+	return file_content_content_proto_rawDescData
 }
 
-var file_proto_content_content_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
-var file_proto_content_content_proto_goTypes = []any{
+var file_content_content_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
+var file_content_content_proto_goTypes = []any{
 	(*Movie)(nil),                    // 0: content.Movie
 	(*Genre)(nil),                    // 1: content.Genre
 	(*CreateMovieRequest)(nil),       // 2: content.CreateMovieRequest
@@ -1632,7 +1632,7 @@ var file_proto_content_content_proto_goTypes = []any{
 	(*GetSimilarMoviesResponse)(nil), // 25: content.GetSimilarMoviesResponse
 	(*timestamppb.Timestamp)(nil),    // 26: google.protobuf.Timestamp
 }
-var file_proto_content_content_proto_depIdxs = []int32{
+var file_content_content_proto_depIdxs = []int32{
 	26, // 0: content.Movie.created_at:type_name -> google.protobuf.Timestamp
 	0,  // 1: content.CreateMovieResponse.movie:type_name -> content.Movie
 	0,  // 2: content.GetMovieResponse.movie:type_name -> content.Movie
@@ -1674,26 +1674,26 @@ var file_proto_content_content_proto_depIdxs = []int32{
 	0,  // [0:10] is the sub-list for field type_name
 }
 
-func init() { file_proto_content_content_proto_init() }
-func file_proto_content_content_proto_init() {
-	if File_proto_content_content_proto != nil {
+func init() { file_content_content_proto_init() }
+func file_content_content_proto_init() {
+	if File_content_content_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_content_content_proto_rawDesc), len(file_proto_content_content_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_content_content_proto_rawDesc), len(file_content_content_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   26,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_proto_content_content_proto_goTypes,
-		DependencyIndexes: file_proto_content_content_proto_depIdxs,
-		MessageInfos:      file_proto_content_content_proto_msgTypes,
+		GoTypes:           file_content_content_proto_goTypes,
+		DependencyIndexes: file_content_content_proto_depIdxs,
+		MessageInfos:      file_content_content_proto_msgTypes,
 	}.Build()
-	File_proto_content_content_proto = out.File
-	file_proto_content_content_proto_goTypes = nil
-	file_proto_content_content_proto_depIdxs = nil
+	File_content_content_proto = out.File
+	file_content_content_proto_goTypes = nil
+	file_content_content_proto_depIdxs = nil
 }

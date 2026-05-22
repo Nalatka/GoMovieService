@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package content;
-option go_package = "github.com/Nalatka/GoMovieService/proto";
+option go_package = "github.com/Nalatka/GoMovieService/proto/content";
 
 import "google/protobuf/timestamp.proto";
 
@@ -32,11 +32,11 @@ service ContentService {
 // ─── Messages ──────────────────────────────────────────────
 
 message Movie {
-  int64  id           = 1;
+  string id           = 1;
   string title        = 2;
   string description  = 3;
   int32  year         = 4;
-  int64  genre_id     = 5;
+  string genre_id     = 5;
   string genre_name   = 6;
   string video_url    = 7;
   string poster_url   = 8;
@@ -47,7 +47,7 @@ message Movie {
 }
 
 message Genre {
-  int64  id   = 1;
+  string id   = 1;
   string name = 2;
 }
 
@@ -57,29 +57,29 @@ message CreateMovieRequest {
   string title        = 1;
   string description  = 2;
   int32  year         = 3;
-  int64  genre_id     = 4;
+  string genre_id     = 4;
   string video_url    = 5;
   string poster_url   = 6;
   int32  duration_sec = 7;
 }
 message CreateMovieResponse { Movie movie = 1; }
 
-message GetMovieRequest  { int64 movie_id = 1; }
+message GetMovieRequest  { string movie_id = 1; }
 message GetMovieResponse { Movie movie    = 1; }
 
 message UpdateMovieRequest {
-  int64  movie_id     = 1;
+  string movie_id     = 1;
   string title        = 2;
   string description  = 3;
   int32  year         = 4;
-  int64  genre_id     = 5;
+  string genre_id     = 5;
   string video_url    = 6;
   string poster_url   = 7;
   int32  duration_sec = 8;
 }
 message UpdateMovieResponse { Movie movie = 1; }
 
-message DeleteMovieRequest  { int64 movie_id = 1; }
+message DeleteMovieRequest  { string movie_id = 1; }
 message DeleteMovieResponse { bool  success  = 1; }
 
 // Listing & Search
@@ -95,15 +95,15 @@ message SearchMoviesResponse { repeated Movie movies = 1; int32 total = 2; }
 message GetGenresRequest  {}
 message GetGenresResponse { repeated Genre genres = 1; }
 
-message GetMoviesByGenreRequest  { int64 genre_id = 1; int32 page = 2; int32 limit = 3; }
+message GetMoviesByGenreRequest  { string genre_id = 1; int32 page = 2; int32 limit = 3; }
 message GetMoviesByGenreResponse { repeated Movie movies = 1; int32 total = 2; }
 
 // Ratings
 
 message RateMovieRequest {
-  int64 movie_id = 1;
-  int64 user_id  = 2;
-  int32 score    = 3;
+  string movie_id = 1;
+  string user_id  = 2;
+  int32  score    = 3;
 }
 message RateMovieResponse {
   bool   success       = 1;
@@ -111,7 +111,7 @@ message RateMovieResponse {
   int64  total_votes   = 3;
 }
 
-message GetMovieRatingRequest  { int64 movie_id = 1; }
+message GetMovieRatingRequest  { string movie_id = 1; }
 message GetMovieRatingResponse { double avg_rating = 1; int64 total_votes = 2; }
 
 // Discovery
@@ -119,5 +119,5 @@ message GetMovieRatingResponse { double avg_rating = 1; int64 total_votes = 2; }
 message GetTopMoviesRequest    { int32 limit = 1; }
 message GetTopMoviesResponse   { repeated Movie movies = 1; }
 
-message GetSimilarMoviesRequest  { int64 movie_id = 1; int32 limit = 2; }
+message GetSimilarMoviesRequest  { string movie_id = 1; int32 limit = 2; }
 message GetSimilarMoviesResponse { repeated Movie movies = 1; }
