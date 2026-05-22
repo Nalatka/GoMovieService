@@ -1,0 +1,9 @@
+DROP INDEX IF EXISTS idx_ratings_movie_id;
+DROP INDEX IF EXISTS idx_movies_title;
+DROP INDEX IF EXISTS idx_movies_genre_id;
+
+DROP TABLE IF EXISTS ratings CASCADE;
+DROP TABLE IF EXISTS movies CASCADE;
+DROP TABLE IF EXISTS genres CASCADE;
+
+DROP EXTENSION IF EXISTS "uuid-ossp";

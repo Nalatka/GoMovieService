@@ -109,6 +109,25 @@ func TestLogoutUserDeletesToken(t *testing.T) {
 	}
 }
 
+func TestUpdateUserChangesRoleWhenProvided(t *testing.T) {
+	ctx := context.Background()
+	repo := newFakeRepo()
+	service := NewService(repo, &fakeTokens{}, &fakeEvents{}, &fakeEmail{}, "secret")
+	service.bcryptCost = bcrypt.MinCost
+
+	user, _, err := service.RegisterUser(ctx, "a@example.com", "aidana", "password1")
+	if err != nil {
+		t.Fatalf("register returned error: %v", err)
+	}
+	updated, err := service.UpdateUser(ctx, user.ID, "aidana2", "a2@example.com", "admin")
+	if err != nil {
+		t.Fatalf("UpdateUser returned error: %v", err)
+	}
+	if updated.Role != "admin" {
+		t.Fatalf("expected role admin, got %s", updated.Role)
+	}
+}
+
 func TestDeleteUserPublishesEvent(t *testing.T) {
 	ctx := context.Background()
 	repo := newFakeRepo()
@@ -214,13 +233,16 @@ func (r *fakeRepo) GetUserByEmail(_ context.Context, email string) (domain.User,
 	return r.users[id], nil
 }
 
-func (r *fakeRepo) UpdateUser(_ context.Context, id string, username string, email string) (domain.User, error) {
+func (r *fakeRepo) UpdateUser(_ context.Context, id string, username string, email string, role string) (domain.User, error) {
 	user, ok := r.users[id]
 	if !ok {
 		return domain.User{}, ErrNotFound
 	}
 	user.Username = username
 	user.Email = email
+	if role != "" {
+		user.Role = role
+	}
 	r.users[id] = user
 	r.byEmail[email] = id
 	return user, nil

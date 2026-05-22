@@ -45,7 +45,7 @@ func main() {
 
 	// Redis
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     getEnv("REDIS_ADDR", "localhost:6379"),
+		Addr:     firstNonEmpty(getEnv("REDIS_ADDR", ""), getEnv("REDIS_HOST", ""), "localhost:6379"),
 		Password: getEnv("REDIS_PASSWORD", ""),
 	})
 
@@ -97,4 +97,13 @@ func getEnv(key, fallback string) string {
 		return v
 	}
 	return fallback
+}
+
+func firstNonEmpty(values ...string) string {
+	for _, v := range values {
+		if v != "" {
+			return v
+		}
+	}
+	return ""
 }

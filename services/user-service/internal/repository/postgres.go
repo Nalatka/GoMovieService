@@ -50,14 +50,17 @@ func (r *PostgresRepository) GetUserByEmail(ctx context.Context, email string) (
 	return user, mapError(err)
 }
 
-func (r *PostgresRepository) UpdateUser(ctx context.Context, id string, username string, email string) (domain.User, error) {
+func (r *PostgresRepository) UpdateUser(ctx context.Context, id string, username string, email string, role string) (domain.User, error) {
 	var user domain.User
 	err := r.pool.QueryRow(ctx, `
 		UPDATE users
-		SET username = $2, email = $3, updated_at = NOW()
+		SET username = $2,
+		    email = $3,
+		    role = CASE WHEN $4 = '' THEN role ELSE $4 END,
+		    updated_at = NOW()
 		WHERE id = $1
 		RETURNING id::text, email, username, password, role, created_at, updated_at
-	`, id, username, email).Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &user.Role, &user.CreatedAt, &user.UpdatedAt)
+	`, id, username, email, role).Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &user.Role, &user.CreatedAt, &user.UpdatedAt)
 	return user, mapError(err)
 }
 

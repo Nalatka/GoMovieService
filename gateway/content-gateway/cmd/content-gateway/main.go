@@ -41,7 +41,7 @@ func main() {
 	mux.HandleFunc("GET /movies/top", h.GetTopMovies)
 	mux.HandleFunc("GET /movies/{id}/similar", h.GetSimilarMovies)
 
-	addr := ":" + getEnv("GATEWAY_PORT", "8082")
+	addr := ":" + firstNonEmpty(getEnv("GATEWAY_PORT", ""), getEnv("PORT", ""), "8082")
 	log.Printf("Content Gateway HTTP listening on %s", addr)
 	if err := http.ListenAndServe(addr, mux); err != nil {
 		log.Fatalf("listen: %v", err)
@@ -53,4 +53,13 @@ func getEnv(key, fallback string) string {
 		return v
 	}
 	return fallback
+}
+
+func firstNonEmpty(values ...string) string {
+	for _, v := range values {
+		if v != "" {
+			return v
+		}
+	}
+	return ""
 }

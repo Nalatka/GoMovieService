@@ -17,7 +17,7 @@ type UserUsecase interface {
 	LoginUser(ctx context.Context, email string, password string) (domain.User, string, error)
 	LogoutUser(ctx context.Context, token string) error
 	GetUser(ctx context.Context, id string) (domain.User, error)
-	UpdateUser(ctx context.Context, id string, username string, email string) (domain.User, error)
+	UpdateUser(ctx context.Context, id string, username string, email string, role string) (domain.User, error)
 	DeleteUser(ctx context.Context, id string) error
 	GetWatchlist(ctx context.Context, userID string) ([]domain.WatchlistItem, error)
 	AddToWatchlist(ctx context.Context, userID string, movieID string) error
@@ -68,7 +68,7 @@ func (h *Handler) GetUser(ctx context.Context, req *userpb.GetUserRequest) (*use
 }
 
 func (h *Handler) UpdateUser(ctx context.Context, req *userpb.UpdateUserRequest) (*userpb.UpdateUserResponse, error) {
-	user, err := h.service.UpdateUser(ctx, req.GetUserId(), req.GetUsername(), req.GetEmail())
+	user, err := h.service.UpdateUser(ctx, req.GetUserId(), req.GetUsername(), req.GetEmail(), req.GetRole())
 	if err != nil {
 		return nil, rpcError(err)
 	}

@@ -23,7 +23,7 @@ type UserRepository interface {
 	CreateUser(ctx context.Context, email string, username string, passwordHash string, role string) (domain.User, error)
 	GetUserByID(ctx context.Context, id string) (domain.User, error)
 	GetUserByEmail(ctx context.Context, email string) (domain.User, error)
-	UpdateUser(ctx context.Context, id string, username string, email string) (domain.User, error)
+	UpdateUser(ctx context.Context, id string, username string, email string, role string) (domain.User, error)
 	DeleteUser(ctx context.Context, id string) error
 	GetWatchlist(ctx context.Context, userID string) ([]domain.WatchlistItem, error)
 	AddToWatchlist(ctx context.Context, userID string, movieID string) error
@@ -149,14 +149,18 @@ func (s *Service) GetUser(ctx context.Context, id string) (domain.User, error) {
 	return s.repo.GetUserByID(ctx, id)
 }
 
-func (s *Service) UpdateUser(ctx context.Context, id string, username string, email string) (domain.User, error) {
+func (s *Service) UpdateUser(ctx context.Context, id string, username string, email string, role string) (domain.User, error) {
 	id = strings.TrimSpace(id)
 	email = strings.TrimSpace(strings.ToLower(email))
 	username = strings.TrimSpace(username)
+	role = strings.TrimSpace(strings.ToLower(role))
 	if id == "" || email == "" || username == "" {
 		return domain.User{}, ErrInvalidInput
 	}
-	return s.repo.UpdateUser(ctx, id, username, email)
+	if role != "" && role != "user" && role != "admin" {
+		return domain.User{}, ErrInvalidInput
+	}
+	return s.repo.UpdateUser(ctx, id, username, email, role)
 }
 
 func (s *Service) DeleteUser(ctx context.Context, id string) error {
