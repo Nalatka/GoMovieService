@@ -8,13 +8,13 @@ import (
 	"os"
 	"time"
 
-	streampb "github.com/Nalatka/GoMovieService/proto"
-	deliverygrpc "github.com/Nalatka/GoMovieService/services/stream-service/internal/delivery/grpc"
-	"github.com/Nalatka/GoMovieService/services/stream-service/internal/repository"
-	"github.com/Nalatka/GoMovieService/services/stream-service/internal/usecase"
+	streampb "github.com/Nalatka/GoMovieService/proto/stream"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/nats-io/nats.go"
 	"github.com/redis/go-redis/v9"
+	deliverygrpc "gomovieservice/services/stream-service/internal/delivery/grpc"
+	"gomovieservice/services/stream-service/internal/repository"
+	"gomovieservice/services/stream-service/internal/usecase"
 	"google.golang.org/grpc"
 )
 
@@ -37,7 +37,7 @@ func main() {
 
 	// Redis connection
 	redisClient := redis.NewClient(&redis.Options{
-		Addr: getenv("REDIS_ADDR", "localhost:6379"),
+		Addr: getenv("REDIS_HOST", "localhost:6379"),
 	})
 	defer redisClient.Close()
 	if err := redisClient.Ping(ctx).Err(); err != nil {

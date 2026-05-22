@@ -3,9 +3,12 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 
 	pb "github.com/Nalatka/GoMovieService/proto/content"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
 
@@ -16,8 +19,6 @@ type Handler struct {
 func NewHandler(client pb.ContentServiceClient) *Handler {
 	return &Handler{client: client}
 }
-
-// helpers
 
 func writeJSON(w http.ResponseWriter, code int, v any) {
 	w.Header().Set("Content-Type", "application/json")
@@ -49,9 +50,10 @@ func queryInt32(r *http.Request, key string, def int32) int32 {
 	return int32(v)
 }
 
-// POST /movies
-
 func (h *Handler) CreateMovie(w http.ResponseWriter, r *http.Request) {
+	if !requireAdmin(w, r) {
+		return
+	}
 	var req pb.CreateMovieRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		writeError(w, http.StatusBadRequest, "invalid body")
@@ -71,8 +73,6 @@ func (h *Handler) CreateMovie(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusCreated, resp)
 }
 
-// GET /movies/{id}
-
 func (h *Handler) GetMovie(w http.ResponseWriter, r *http.Request) {
 	id, err := pathUUID(r, "id")
 	if err != nil {
@@ -87,9 +87,10 @@ func (h *Handler) GetMovie(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, resp)
 }
 
-// PUT /movies/{id}
-
 func (h *Handler) UpdateMovie(w http.ResponseWriter, r *http.Request) {
+	if !requireAdmin(w, r) {
+		return
+	}
 	id, err := pathUUID(r, "id")
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "invalid id format (expected UUID)")
@@ -109,9 +110,10 @@ func (h *Handler) UpdateMovie(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, resp)
 }
 
-// DELETE /movies/{id}
-
 func (h *Handler) DeleteMovie(w http.ResponseWriter, r *http.Request) {
+	if !requireAdmin(w, r) {
+		return
+	}
 	id, err := pathUUID(r, "id")
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "invalid id format (expected UUID)")
@@ -125,8 +127,6 @@ func (h *Handler) DeleteMovie(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, resp)
 }
 
-// GET /movies
-
 func (h *Handler) ListMovies(w http.ResponseWriter, r *http.Request) {
 	page := queryInt32(r, "page", 1)
 	limit := queryInt32(r, "limit", 20)
@@ -137,8 +137,6 @@ func (h *Handler) ListMovies(w http.ResponseWriter, r *http.Request) {
 	}
 	writeJSON(w, http.StatusOK, resp)
 }
-
-// GET /movies/search?q=...&page=1&limit=20
 
 func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query().Get("q")
@@ -152,8 +150,6 @@ func (h *Handler) SearchMovies(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, resp)
 }
 
-// GET /genres
-
 func (h *Handler) GetGenres(w http.ResponseWriter, r *http.Request) {
 	resp, err := h.client.GetGenres(r.Context(), &pb.GetGenresRequest{})
 	if err != nil {
@@ -162,8 +158,6 @@ func (h *Handler) GetGenres(w http.ResponseWriter, r *http.Request) {
 	}
 	writeJSON(w, http.StatusOK, resp)
 }
-
-// GET /genres/{genre_id}/movies
 
 func (h *Handler) GetMoviesByGenre(w http.ResponseWriter, r *http.Request) {
 	genreID, err := pathUUID(r, "genre_id")
@@ -183,8 +177,6 @@ func (h *Handler) GetMoviesByGenre(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, resp)
 }
 
-// POST /movies/{id}/rate
-
 func (h *Handler) RateMovie(w http.ResponseWriter, r *http.Request) {
 	id, err := pathUUID(r, "id")
 	if err != nil {
@@ -192,7 +184,7 @@ func (h *Handler) RateMovie(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var body struct {
-		UserID string `json:"user_id"` // FIXED: UserID is now a string representation of UUID
+		UserID string `json:"user_id"`
 		Score  int32  `json:"score"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
@@ -214,8 +206,6 @@ func (h *Handler) RateMovie(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, resp)
 }
 
-// GET /movies/{id}/rating
-
 func (h *Handler) GetMovieRating(w http.ResponseWriter, r *http.Request) {
 	id, err := pathUUID(r, "id")
 	if err != nil {
@@ -230,8 +220,6 @@ func (h *Handler) GetMovieRating(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, resp)
 }
 
-// GET /movies/top?limit=10
-
 func (h *Handler) GetTopMovies(w http.ResponseWriter, r *http.Request) {
 	limit := queryInt32(r, "limit", 10)
 	resp, err := h.client.GetTopMovies(r.Context(), &pb.GetTopMoviesRequest{Limit: limit})
@@ -241,8 +229,6 @@ func (h *Handler) GetTopMovies(w http.ResponseWriter, r *http.Request) {
 	}
 	writeJSON(w, http.StatusOK, resp)
 }
-
-// GET /movies/{id}/similar?limit=10
 
 func (h *Handler) GetSimilarMovies(w http.ResponseWriter, r *http.Request) {
 	id, err := pathUUID(r, "id")
@@ -257,4 +243,32 @@ func (h *Handler) GetSimilarMovies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, http.StatusOK, resp)
+}
+
+func requireAdmin(w http.ResponseWriter, r *http.Request) bool {
+	token := strings.TrimSpace(strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer "))
+	if token == "" {
+		writeError(w, http.StatusUnauthorized, "missing bearer token")
+		return false
+	}
+	claims := jwt.MapClaims{}
+	parsed, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (any, error) {
+		return []byte(getenv("JWT_SECRET", "dev-secret")), nil
+	})
+	if err != nil || !parsed.Valid {
+		writeError(w, http.StatusUnauthorized, "invalid token")
+		return false
+	}
+	if claims["role"] != "admin" {
+		writeError(w, http.StatusForbidden, "admin role required")
+		return false
+	}
+	return true
+}
+
+func getenv(key string, fallback string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return fallback
 }

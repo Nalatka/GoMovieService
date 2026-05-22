@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	grpcAddr := getEnv("GRPC_ADDR", "localhost:50052")
+	grpcAddr := getEnv("CONTENT_SERVICE_ADDR", getEnv("GRPC_ADDR", "localhost:50052"))
 	conn, err := grpc.NewClient(grpcAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("grpc dial: %v", err)
@@ -25,23 +25,19 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	// Movies CRUD
 	mux.HandleFunc("POST /movies", h.CreateMovie)
 	mux.HandleFunc("GET /movies/{id}", h.GetMovie)
 	mux.HandleFunc("PUT /movies/{id}", h.UpdateMovie)
 	mux.HandleFunc("DELETE /movies/{id}", h.DeleteMovie)
 	mux.HandleFunc("GET /movies", h.ListMovies)
 
-	// Search & genres
 	mux.HandleFunc("GET /movies/search", h.SearchMovies)
 	mux.HandleFunc("GET /genres", h.GetGenres)
 	mux.HandleFunc("GET /genres/{genre_id}/movies", h.GetMoviesByGenre)
 
-	// Ratings
 	mux.HandleFunc("POST /movies/{id}/rate", h.RateMovie)
 	mux.HandleFunc("GET /movies/{id}/rating", h.GetMovieRating)
 
-	// Top & similar
 	mux.HandleFunc("GET /movies/top", h.GetTopMovies)
 	mux.HandleFunc("GET /movies/{id}/similar", h.GetSimilarMovies)
 

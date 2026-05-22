@@ -5,11 +5,11 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/Nalatka/GoMovieService/services/user-service/internal/domain"
-	"github.com/Nalatka/GoMovieService/services/user-service/internal/usecase"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"gomovieservice/services/user-service/internal/domain"
+	"gomovieservice/services/user-service/internal/usecase"
 )
 
 type PostgresRepository struct {
@@ -20,33 +20,33 @@ func NewPostgresRepository(pool *pgxpool.Pool) *PostgresRepository {
 	return &PostgresRepository{pool: pool}
 }
 
-func (r *PostgresRepository) CreateUser(ctx context.Context, email string, username string, passwordHash string) (domain.User, error) {
+func (r *PostgresRepository) CreateUser(ctx context.Context, email string, username string, passwordHash string, role string) (domain.User, error) {
 	var user domain.User
 	err := r.pool.QueryRow(ctx, `
-		INSERT INTO users (email, username, password)
-		VALUES ($1, $2, $3)
-		RETURNING id::text, email, username, password, created_at, updated_at
-	`, email, username, passwordHash).Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt)
+		INSERT INTO users (email, username, password, role)
+		VALUES ($1, $2, $3, $4)
+		RETURNING id::text, email, username, password, role, created_at, updated_at
+	`, email, username, passwordHash, role).Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &user.Role, &user.CreatedAt, &user.UpdatedAt)
 	return user, mapError(err)
 }
 
 func (r *PostgresRepository) GetUserByID(ctx context.Context, id string) (domain.User, error) {
 	var user domain.User
 	err := r.pool.QueryRow(ctx, `
-		SELECT id::text, email, username, password, created_at, updated_at
+		SELECT id::text, email, username, password, role, created_at, updated_at
 		FROM users
 		WHERE id = $1
-	`, id).Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt)
+	`, id).Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &user.Role, &user.CreatedAt, &user.UpdatedAt)
 	return user, mapError(err)
 }
 
 func (r *PostgresRepository) GetUserByEmail(ctx context.Context, email string) (domain.User, error) {
 	var user domain.User
 	err := r.pool.QueryRow(ctx, `
-		SELECT id::text, email, username, password, created_at, updated_at
+		SELECT id::text, email, username, password, role, created_at, updated_at
 		FROM users
 		WHERE email = $1
-	`, email).Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt)
+	`, email).Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &user.Role, &user.CreatedAt, &user.UpdatedAt)
 	return user, mapError(err)
 }
 
@@ -56,8 +56,8 @@ func (r *PostgresRepository) UpdateUser(ctx context.Context, id string, username
 		UPDATE users
 		SET username = $2, email = $3, updated_at = NOW()
 		WHERE id = $1
-		RETURNING id::text, email, username, password, created_at, updated_at
-	`, id, username, email).Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt)
+		RETURNING id::text, email, username, password, role, created_at, updated_at
+	`, id, username, email).Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &user.Role, &user.CreatedAt, &user.UpdatedAt)
 	return user, mapError(err)
 }
 

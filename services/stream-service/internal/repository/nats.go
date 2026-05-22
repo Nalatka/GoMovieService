@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/Nalatka/GoMovieService/services/stream-service/internal/domain"
 	"github.com/nats-io/nats.go"
+	"gomovieservice/services/stream-service/internal/domain"
 )
 
 type NATSEvents struct {

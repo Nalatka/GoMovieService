@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Nalatka/GoMovieService/services/stream-service/internal/domain"
+	"gomovieservice/services/stream-service/internal/domain"
 )
 
 var (
@@ -47,10 +47,10 @@ type EventPublisher interface {
 }
 
 type Service struct {
-	sessionRepo SessionRepository
+	sessionRepo  SessionRepository
 	subtitleRepo SubtitleRepository
-	cache       CacheRepository
-	events      EventPublisher
+	cache        CacheRepository
+	events       EventPublisher
 }
 
 func NewService(
@@ -60,7 +60,7 @@ func NewService(
 	events EventPublisher,
 ) *Service {
 	return &Service{
-		sessionRepo: sessionRepo,
+		sessionRepo:  sessionRepo,
 		subtitleRepo: subtitleRepo,
 		cache:        cache,
 		events:       events,
@@ -127,7 +127,7 @@ func (s *Service) StopStream(ctx context.Context, sessionID string) (int32, erro
 	_ = s.cache.DeleteSession(ctx, sessionID)
 
 	// Publish event
-	if s.events != nil {
+	if s.events != nil && watchedSeconds > 80 {
 		_ = s.events.PublishStreamCompleted(ctx, session.UserID, session.MovieID, watchedSeconds)
 	}
 

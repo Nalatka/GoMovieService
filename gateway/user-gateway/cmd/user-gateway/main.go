@@ -11,6 +11,7 @@ import (
 	"time"
 
 	userpb "github.com/Nalatka/GoMovieService/proto"
+	"github.com/golang-jwt/jwt/v5"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/status"
@@ -131,9 +132,15 @@ func (h *apiHandler) userProfile(w http.ResponseWriter, r *http.Request, userID 
 	defer cancel()
 	switch r.Method {
 	case http.MethodGet:
+		if !h.requireSelfOrAdmin(w, r, userID) {
+			return
+		}
 		resp, err := h.client.GetUser(ctx, &userpb.GetUserRequest{UserId: userID})
 		writeGRPC(w, http.StatusOK, resp, err)
 	case http.MethodPatch:
+		if !h.requireSelfOrAdmin(w, r, userID) {
+			return
+		}
 		var body struct {
 			Username string `json:"username"`
 			Email    string `json:"email"`
@@ -144,6 +151,9 @@ func (h *apiHandler) userProfile(w http.ResponseWriter, r *http.Request, userID 
 		resp, err := h.client.UpdateUser(ctx, &userpb.UpdateUserRequest{UserId: userID, Username: body.Username, Email: body.Email})
 		writeGRPC(w, http.StatusOK, resp, err)
 	case http.MethodDelete:
+		if !h.requireAdmin(w, r) {
+			return
+		}
 		resp, err := h.client.DeleteUser(ctx, &userpb.DeleteUserRequest{UserId: userID})
 		writeGRPC(w, http.StatusOK, resp, err)
 	default:
@@ -152,6 +162,9 @@ func (h *apiHandler) userProfile(w http.ResponseWriter, r *http.Request, userID 
 }
 
 func (h *apiHandler) watchlist(w http.ResponseWriter, r *http.Request, userID string) {
+	if !h.requireSelfOrAdmin(w, r, userID) {
+		return
+	}
 	ctx, cancel := requestContext(r)
 	defer cancel()
 	switch r.Method {
@@ -177,6 +190,9 @@ func (h *apiHandler) watchlistItem(w http.ResponseWriter, r *http.Request, userI
 		methodNotAllowed(w)
 		return
 	}
+	if !h.requireSelfOrAdmin(w, r, userID) {
+		return
+	}
 	ctx, cancel := requestContext(r)
 	defer cancel()
 	resp, err := h.client.RemoveFromWatchlist(ctx, &userpb.RemoveFromWatchlistRequest{UserId: userID, MovieId: movieID})
@@ -184,6 +200,9 @@ func (h *apiHandler) watchlistItem(w http.ResponseWriter, r *http.Request, userI
 }
 
 func (h *apiHandler) history(w http.ResponseWriter, r *http.Request, userID string) {
+	if !h.requireSelfOrAdmin(w, r, userID) {
+		return
+	}
 	ctx, cancel := requestContext(r)
 	defer cancel()
 	switch r.Method {
@@ -210,10 +229,54 @@ func (h *apiHandler) recommendations(w http.ResponseWriter, r *http.Request, use
 		methodNotAllowed(w)
 		return
 	}
+	if !h.requireSelfOrAdmin(w, r, userID) {
+		return
+	}
 	ctx, cancel := requestContext(r)
 	defer cancel()
 	resp, err := h.client.GetRecommendations(ctx, &userpb.GetRecommendationsRequest{UserId: userID, Limit: int32(queryInt(r, "limit"))})
 	writeGRPC(w, http.StatusOK, resp, err)
+}
+
+func (h *apiHandler) requireAdmin(w http.ResponseWriter, r *http.Request) bool {
+	claims, ok := parseClaims(w, r)
+	if !ok {
+		return false
+	}
+	if claims["role"] != "admin" {
+		writeJSON(w, http.StatusForbidden, map[string]string{"error": "admin role required"})
+		return false
+	}
+	return true
+}
+
+func (h *apiHandler) requireSelfOrAdmin(w http.ResponseWriter, r *http.Request, userID string) bool {
+	claims, ok := parseClaims(w, r)
+	if !ok {
+		return false
+	}
+	if claims["role"] == "admin" || claims["sub"] == userID {
+		return true
+	}
+	writeJSON(w, http.StatusForbidden, map[string]string{"error": "access denied"})
+	return false
+}
+
+func parseClaims(w http.ResponseWriter, r *http.Request) (jwt.MapClaims, bool) {
+	token := strings.TrimSpace(strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer "))
+	if token == "" {
+		writeJSON(w, http.StatusUnauthorized, map[string]string{"error": "missing bearer token"})
+		return nil, false
+	}
+	claims := jwt.MapClaims{}
+	parsed, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (any, error) {
+		return []byte(getenv("JWT_SECRET", "dev-secret")), nil
+	})
+	if err != nil || !parsed.Valid {
+		writeJSON(w, http.StatusUnauthorized, map[string]string{"error": "invalid token"})
+		return nil, false
+	}
+	return claims, true
 }
 
 func requestContext(r *http.Request) (context.Context, context.CancelFunc) {

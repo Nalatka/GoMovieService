@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/Nalatka/GoMovieService/services/user-service/internal/domain"
-	"github.com/Nalatka/GoMovieService/services/user-service/internal/usecase"
 	"github.com/nats-io/nats.go"
+	"gomovieservice/services/user-service/internal/domain"
+	"gomovieservice/services/user-service/internal/usecase"
 )
 
 type NATSEvents struct {

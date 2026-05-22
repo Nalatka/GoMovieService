@@ -9,12 +9,12 @@ import (
 	"time"
 
 	userpb "github.com/Nalatka/GoMovieService/proto"
-	deliverygrpc "github.com/Nalatka/GoMovieService/services/user-service/internal/delivery/grpc"
-	"github.com/Nalatka/GoMovieService/services/user-service/internal/repository"
-	"github.com/Nalatka/GoMovieService/services/user-service/internal/usecase"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/nats-io/nats.go"
 	"github.com/redis/go-redis/v9"
+	deliverygrpc "gomovieservice/services/user-service/internal/delivery/grpc"
+	"gomovieservice/services/user-service/internal/repository"
+	"gomovieservice/services/user-service/internal/usecase"
 	"google.golang.org/grpc"
 )
 
@@ -49,6 +49,7 @@ func main() {
 	events := repository.NewNATSEvents(natsConn)
 	mailer := repository.NewSMTPMailer(getenv("SMTP_HOST", ""), getenv("SMTP_PORT", ""), getenv("SMTP_USERNAME", ""), getenv("SMTP_PASSWORD", ""), getenv("SMTP_FROM", ""))
 	service := usecase.NewService(repository.NewPostgresRepository(db), repository.NewRedisTokenStore(redisClient), events, mailer, getenv("JWT_SECRET", "dev-secret"))
+	service.SetAdminEmails(getenv("ADMIN_EMAILS", ""))
 	if _, err := events.SubscribeStreamCompleted(service); err != nil {
 		log.Fatal(err)
 	}

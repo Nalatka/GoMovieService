@@ -5,8 +5,8 @@ import (
 	"errors"
 
 	userpb "github.com/Nalatka/GoMovieService/proto"
-	"github.com/Nalatka/GoMovieService/services/user-service/internal/domain"
-	"github.com/Nalatka/GoMovieService/services/user-service/internal/usecase"
+	"gomovieservice/services/user-service/internal/domain"
+	"gomovieservice/services/user-service/internal/usecase"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -141,6 +141,7 @@ func toProtoUser(user domain.User) *userpb.User {
 		Email:     user.Email,
 		Username:  user.Username,
 		CreatedAt: timestamppb.New(user.CreatedAt),
+		Role:      user.Role,
 	}
 }
 
