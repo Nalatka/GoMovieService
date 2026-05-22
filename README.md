@@ -31,5 +31,8 @@ movie data
 top movies list
 active stream sessions
 
+Grafana:
+Grafana for monitoring. Prometheus is used for metrics, Loki is used for logs, and Tempo is used for traces. Grafana connects to all of them and shows data in one place. This helps us see service health, logs, and request tracing.
+
 How to run:
 docker-compose up -d

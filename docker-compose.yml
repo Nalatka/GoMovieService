@@ -59,6 +59,7 @@ services:
       - nats
     networks:
       - streaming-net
+    
 
   content-db:
     image: postgres:16-alpine
