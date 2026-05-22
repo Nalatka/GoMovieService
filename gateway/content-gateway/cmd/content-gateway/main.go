@@ -1,40 +1,58 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"os"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+
+	pb "github.com/Nalatka/GoMovieService/proto/content"
+	"gomovieservice/gateway/content-gateway/internal/handler"
 )
 
-type statusResponse struct {
-	Gateway  string `json:"gateway"`
-	Status   string `json:"status"`
-	Upstream string `json:"upstream"`
-}
-
 func main() {
-	port := getenv("PORT", "8082")
-	upstream := getenv("CONTENT_SERVICE_ADDR", "content-service:50052")
-	addr := ":" + port
+	grpcAddr := getEnv("GRPC_ADDR", "localhost:50052")
+	conn, err := grpc.NewClient(grpcAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("grpc dial: %v", err)
+	}
+	defer conn.Close()
+
+	client := pb.NewContentServiceClient(conn)
+	h := handler.NewHandler(client)
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/health", func(w http.ResponseWriter, _ *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(statusResponse{
-			Gateway:  "content-gateway",
-			Status:   "ok",
-			Upstream: upstream,
-		})
-	})
 
-	log.Printf("content-gateway listening on %s, upstream %s", addr, upstream)
+	// Movies CRUD
+	mux.HandleFunc("POST /movies", h.CreateMovie)
+	mux.HandleFunc("GET /movies/{id}", h.GetMovie)
+	mux.HandleFunc("PUT /movies/{id}", h.UpdateMovie)
+	mux.HandleFunc("DELETE /movies/{id}", h.DeleteMovie)
+	mux.HandleFunc("GET /movies", h.ListMovies)
+
+	// Search & genres
+	mux.HandleFunc("GET /movies/search", h.SearchMovies)
+	mux.HandleFunc("GET /genres", h.GetGenres)
+	mux.HandleFunc("GET /genres/{genre_id}/movies", h.GetMoviesByGenre)
+
+	// Ratings
+	mux.HandleFunc("POST /movies/{id}/rate", h.RateMovie)
+	mux.HandleFunc("GET /movies/{id}/rating", h.GetMovieRating)
+
+	// Top & similar
+	mux.HandleFunc("GET /movies/top", h.GetTopMovies)
+	mux.HandleFunc("GET /movies/{id}/similar", h.GetSimilarMovies)
+
+	addr := ":" + getEnv("GATEWAY_PORT", "8082")
+	log.Printf("Content Gateway HTTP listening on %s", addr)
 	if err := http.ListenAndServe(addr, mux); err != nil {
-		log.Fatal(err)
+		log.Fatalf("listen: %v", err)
 	}
 }
 
-func getenv(key, fallback string) string {
+func getEnv(key, fallback string) string {
 	if v := os.Getenv(key); v != "" {
 		return v
 	}
