@@ -174,6 +174,7 @@ function renderMovies(movies) {
   $("movieGrid").innerHTML = movies.map(m => {
     const id      = m.id || m.movie_id || "";
     const rating  = m.avg_rating ? `⭐ ${Number(m.avg_rating).toFixed(1)}` : "";
+    const views   = (m.views != null && m.views > 0) ? `👁 ${m.views}` : "";
     const poster  = m.poster_url || m.posterUrl || "";
     const imgTag  = poster
       ? `<img class="poster" src="${attr(poster)}" alt="${attr(m.title)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
@@ -184,7 +185,7 @@ function renderMovies(movies) {
         ${imgTag}${placeholder}
         <div class="card-body">
           <div class="card-title">${esc(m.title || id)}</div>
-          <div class="card-meta">${esc(m.year || "")}  ${rating}</div>
+          <div class="card-meta">${[m.year, rating, views].filter(Boolean).join(" · ")}</div>
         </div>
       </div>`;
   }).join("");
@@ -575,16 +576,12 @@ async function stopStream() {
   const sid = currentSessionID();
   if (sid) {
     try {
+      // StopStream publishes stream.completed via NATS →
+      // user-service subscribes and writes watch history automatically
       await api(`/api/streams/streams/${sid}/stop`, {method: "POST"});
-      if (session?.user?.id && currentMovie) {
-        await api(`/api/users/users/${session.user.id}/history`, {
-          method: "POST",
-          body: JSON.stringify({
-            movie_id: currentMovie.id || currentMovie.movie_id,
-            watched_seconds: watchedSeconds
-          })
-        });
-      }
+
+      // Give NATS a moment to deliver stream.completed, then refresh history
+      setTimeout(() => loadHistory(), 1500);
     } catch {}
   }
 
@@ -599,6 +596,8 @@ function closeModal() {
     currentMovie = null;
     $("playerModal").classList.add("hidden");
     document.body.style.overflow = "";
+    // Reload movies so views counter updates on cards
+    setTimeout(() => loadMovies(), 1800);
   });
 }
 
