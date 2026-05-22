@@ -1,155 +1,165 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>GoMovie</title>
-    <link rel="stylesheet" href="/styles.css">
-  </head>
-  <body>
-    <header>
-      <div>
-        <h1>GoMovie</h1>
-        <p id="status">Not signed in</p>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GoMovie</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>GoMovie</h1>
+    <p id="status">Not signed in</p>
+  </div>
+  <nav>
+    <button data-tab="movies">Movies</button>
+    <button data-tab="library">My Library</button>
+    <button data-tab="admin" id="adminTab" class="hidden">Admin</button>
+  </nav>
+</header>
+
+<main>
+  <!-- Auth -->
+  <section id="account" class="panel">
+    <form id="authForm" class="columns">
+      <input name="email"    placeholder="email"    autocomplete="email">
+      <input name="username" placeholder="username">
+      <input name="password" placeholder="password" type="password" autocomplete="current-password">
+      <button value="login">Login</button>
+      <button value="register">Register</button>
+      <button id="logout" type="button" class="neutral">Logout</button>
+    </form>
+  </section>
+
+  <!-- Movies -->
+  <section id="movies" class="view">
+    <div class="panel">
+      <div class="toolbar">
+        <form id="searchForm" class="search">
+          <input name="q" placeholder="Search movies...">
+          <button>Search</button>
+        </form>
+        <button id="loadMovies">All Movies</button>
+        <button id="loadTop">Top Rated</button>
+        <button id="loadGenres">Genres</button>
       </div>
-      <nav>
-        <button data-tab="movies">Movies</button>
-        <button data-tab="library">My Library</button>
-        <button data-tab="stream">Stream</button>
-        <button data-tab="admin" id="adminTab" class="hidden">Admin</button>
-      </nav>
-    </header>
+      <div id="genreGrid" class="chips"></div>
+      <div id="movieGrid" class="movie-grid"></div>
+    </div>
+  </section>
 
-    <main>
-      <section id="account" class="panel">
-        <form id="authForm" class="columns">
-          <input name="email" placeholder="email" autocomplete="email">
-          <input name="username" placeholder="username">
-          <input name="password" placeholder="password" type="password" autocomplete="current-password">
-          <button value="login">Login</button>
-          <button value="register">Register</button>
-          <button id="logout" type="button" class="neutral">Logout</button>
-        </form>
-      </section>
-
-      <section id="movies" class="view">
-        <div class="panel">
-          <div class="toolbar">
-            <form id="searchForm" class="search">
-              <input name="q" placeholder="search movies">
-              <button>Search</button>
-            </form>
-            <button id="loadMovies">All Movies</button>
-            <button id="loadTop">Top Movies</button>
-            <button id="loadGenres">Genres</button>
-          </div>
-          <div id="movieGrid" class="cards"></div>
-          <div id="genreGrid" class="chips"></div>
+  <!-- Library -->
+  <section id="library" class="view hidden">
+    <div class="grid">
+      <form id="profileForm" class="panel">
+        <h2 class="section-title">Profile</h2>
+        <div class="columns" style="margin-bottom:10px">
+          <input name="username" placeholder="new username" style="flex:1">
+          <input name="email"    placeholder="new email"    style="flex:1">
         </div>
-      </section>
+        <button>Update Profile</button>
+      </form>
 
-      <section id="library" class="view hidden">
-        <div class="grid">
-          <form id="profileForm" class="panel">
-            <h2>Profile</h2>
-            <input name="username" placeholder="new username">
-            <input name="email" placeholder="new email">
-            <button>Update Profile</button>
-          </form>
-
-          <div class="panel">
-            <div class="toolbar">
-              <h2>Recommendations</h2>
-              <button id="loadRecommendations">Load</button>
-            </div>
-            <div id="recommendations" class="list"></div>
-          </div>
-
-          <div class="panel">
-            <div class="toolbar">
-              <h2>Watchlist</h2>
-              <button id="loadWatchlist">Refresh</button>
-            </div>
-            <div id="watchlist" class="list"></div>
-          </div>
-
-          <div class="panel">
-            <div class="toolbar">
-              <h2>History</h2>
-              <button id="loadHistory">Refresh</button>
-            </div>
-            <div id="history" class="list"></div>
-          </div>
+      <div class="panel">
+        <div class="toolbar">
+          <h2 class="section-title" style="margin:0">Watchlist</h2>
+          <button id="loadWatchlist">Refresh</button>
         </div>
-      </section>
+        <div id="watchlist" class="list"></div>
+      </div>
 
-      <section id="stream" class="view hidden">
-        <form id="streamForm" class="panel">
-          <h2>Stream Session</h2>
-          <div class="columns">
-            <input name="movie_id" placeholder="movie id">
-            <input name="quality" placeholder="quality" value="1080p">
-            <input name="position" placeholder="seek seconds" type="number" value="0">
-            <button value="start">Start</button>
-            <button value="pause">Pause</button>
-            <button value="resume">Resume</button>
-            <button value="seek">Seek</button>
-            <button value="quality">Set Quality</button>
-            <button value="stop" class="danger">Stop</button>
-          </div>
-        </form>
-        <div class="grid">
-          <div class="panel">
-            <div class="toolbar">
-              <h2>Active Streams</h2>
-              <button id="loadActiveStreams">Refresh</button>
-            </div>
-            <div id="activeStreams" class="list"></div>
-          </div>
-          <div class="panel">
-            <div class="toolbar">
-              <h2>Stream Info</h2>
-              <button id="loadPreview">Preview</button>
-            </div>
-            <div id="streamInfo" class="list"></div>
-          </div>
+      <div class="panel">
+        <div class="toolbar">
+          <h2 class="section-title" style="margin:0">Watch History</h2>
+          <button id="loadHistory">Refresh</button>
         </div>
-      </section>
+        <div id="history" class="list"></div>
+      </div>
 
-      <section id="admin" class="view hidden">
-        <div class="grid">
-          <form id="movieForm" class="panel">
-            <h2>Manage Movies</h2>
-            <input name="movie_id" placeholder="movie id for update/delete">
-            <input name="title" placeholder="title">
-            <input name="genre_id" placeholder="genre id">
-            <input name="year" placeholder="year" type="number">
-            <input name="duration_sec" placeholder="duration seconds" type="number">
-            <input name="video_url" placeholder="video url">
-            <input name="poster_url" placeholder="poster url">
-            <textarea name="description" placeholder="description"></textarea>
-            <div class="actions">
-              <button value="create">Create</button>
-              <button value="update">Update</button>
-              <button value="delete" class="danger">Delete</button>
-            </div>
-          </form>
-
-          <form id="userAdminForm" class="panel">
-            <h2>Manage Users</h2>
-            <input name="user_id" placeholder="user id">
-            <button value="get">Get User</button>
-            <button value="delete" class="danger">Delete User</button>
-          </form>
+      <div class="panel">
+        <div class="toolbar">
+          <h2 class="section-title" style="margin:0">Recommendations</h2>
+          <button id="loadRecommendations">Load</button>
         </div>
-      </section>
+        <div id="recommendations" class="list"></div>
+      </div>
+    </div>
+  </section>
 
-      <section class="panel">
-        <h2>Output</h2>
-        <pre id="log"></pre>
-      </section>
-    </main>
+  <!-- Admin -->
+  <section id="admin" class="view hidden">
+    <div class="grid">
+      <form id="movieForm" class="panel">
+        <h2 class="section-title">Manage Movies</h2>
+        <input name="movie_id"    placeholder="movie id (for update/delete)" style="width:100%;margin-bottom:8px">
+        <input name="title"       placeholder="title"       style="width:100%;margin-bottom:8px">
+        <input name="genre_id"    placeholder="genre id"    style="width:100%;margin-bottom:8px">
+        <input name="year"        placeholder="year"        type="number" style="width:100%;margin-bottom:8px">
+        <input name="duration_sec" placeholder="duration (seconds)" type="number" style="width:100%;margin-bottom:8px">
+        <input name="video_url"   placeholder="YouTube URL" style="width:100%;margin-bottom:8px">
+        <input name="poster_url"  placeholder="poster URL"  style="width:100%;margin-bottom:8px">
+        <textarea name="description" placeholder="description"></textarea>
+        <div class="actions" style="margin-top:12px">
+          <button value="create">Create</button>
+          <button value="update">Update</button>
+          <button value="delete" class="danger">Delete</button>
+        </div>
+      </form>
 
-    <script src="/app.js"></script>
-  </body>
+      <form id="userAdminForm" class="panel">
+        <h2 class="section-title">Manage Users</h2>
+        <input name="user_id" placeholder="user id" style="width:100%;margin-bottom:8px">
+        <div class="actions">
+          <button value="get">Get User</button>
+          <button value="delete" class="danger">Delete User</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Debug output -->
+  <div class="panel">
+    <h2 class="section-title">Output</h2>
+    <pre id="log"></pre>
+  </div>
+</main>
+
+<!-- Player Modal -->
+<div id="playerModal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-player" id="playerContainer">
+      <button class="modal-close" id="closeModal">&#x2715;</button>
+      <div id="playerFrame"></div>
+    </div>
+    <div class="modal-info">
+      <h2 id="modalTitle"></h2>
+      <div class="modal-meta" id="modalMeta"></div>
+      <div class="modal-desc" id="modalDesc"></div>
+
+      <div class="stream-status" id="streamStatus">No active stream</div>
+
+      <div class="modal-actions">
+        <button id="modalWatch"    class="neutral">▶ Watch</button>
+        <button id="modalPause"    class="neutral hidden">⏸ Pause</button>
+        <button id="modalResume"   class="neutral hidden">▶ Resume</button>
+        <button id="modalStop"     class="danger  hidden">⏹ Stop</button>
+        <button id="modalWatchlist">+ Watchlist</button>
+      </div>
+
+      <div>
+        <div class="section-title" style="margin-bottom:6px">Rate this movie</div>
+        <div class="rating-row">
+          <input type="range" id="ratingSlider" min="1" max="10" value="7" step="1">
+          <span id="ratingValue">7</span>
+        </div>
+        <button id="submitRating" style="width:100%;margin-top:6px">Submit Rating</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/app.js"></script>
+</body>
 </html>
